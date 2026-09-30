@@ -9,7 +9,7 @@ const PORT = process.env.PORT || 5501;
 
 // --- MIDDLEWARE ---
 app.use(cors());
-app.use(express.json({ limit: '10mb' })); // Standard limit now since we use storage links instead of heavy base64 strings
+app.use(express.json({ limit: '10mb' }));
 
 // --- INITIALIZE SUPABASE CLIENT ---
 const supabaseUrl = process.env.SUPABASE_URL;
@@ -23,14 +23,13 @@ async function uploadToSupabaseStorage(base64Data, folder = 'uploads') {
     try {
         if (!base64Data || !base64Data.startsWith('data:')) return base64Data; // Return as-is if already a URL
 
-        // Extract file extension and base64 buffer
         const matches = base64Data.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
         if (!matches || matches.length !== 3) return base64Data;
 
-        const mimeType = matches.1;
-        const buffer = Buffer.from(matches.2, 'base64');
+        const mimeType = matches[1];
+        const buffer = Buffer.from(matches[2], 'base64');
         const fileExt = mimeType.split('/')[1] || 'png';
-        const fileName = `${folder}/${Date.now()}-${Math.random().toString(36.substring(2, 7))}.${fileExt}`;
+        const fileName = `${folder}/${Date.now()}-${Math.random().toString(36).substring(2, 7)}.${fileExt}`;
 
         const { data, error } = await supabase.storage
             .from('kotas-media')
@@ -41,7 +40,6 @@ async function uploadToSupabaseStorage(base64Data, folder = 'uploads') {
 
         if (error) throw error;
 
-        // Get public URL
         const { data: publicUrlData } = supabase.storage
             .from('kotas-media')
             .getPublicUrl(fileName);
@@ -49,7 +47,7 @@ async function uploadToSupabaseStorage(base64Data, folder = 'uploads') {
         return publicUrlData.publicUrl;
     } catch (err) {
         console.error('Storage upload error:', err.message);
-        return base64Data; // Fallback
+        return base64Data; 
     }
 }
 
