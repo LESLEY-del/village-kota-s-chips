@@ -131,6 +131,30 @@ app.patch('/api/orders/:code', async (req, res) => {
     }
 });
 
+
+// Update Product Price or Image
+app.patch('/api/products/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { price, image } = req.body;
+        
+        const updates = {};
+        if (price !== undefined) updates.price = price;
+        if (image !== undefined) updates.image = image;
+
+        const { data, error } = await supabase
+            .from('products')
+            .update(updates)
+            .eq('id', id)
+            .select();
+
+        if (error) throw error;
+        res.json({ message: 'Product updated successfully', data });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 // 7. Boss Login
 app.post('/api/login', async (req, res) => {
     try {
