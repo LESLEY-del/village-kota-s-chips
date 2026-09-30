@@ -2,8 +2,8 @@
 <html lang="en" class="h-full">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kotas & Chill | Premium Fast Food & Beverages</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Village Kotas Chips | Premium Fast Food & Beverages</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -30,17 +30,21 @@
                         <i class="fa-solid fa-burger text-white text-lg"></i>
                     </div>
                     <div>
-                        <span class="text-xl font-bold tracking-tight text-white">Kotas & <span class="text-amber-500">Chill</span></span>
+                        <span class="text-xl font-bold tracking-tight text-white">Village Kotas & <span class="text-amber-500">Chips</span></span>
                         <span class="block text-xs text-zinc-400 font-medium">Gourmet Street Food & Drinks</span>
                     </div>
                 </div>
 
-                <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-3">
+                    <button onclick="openMenuModal()" class="px-3.5 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-amber-400 text-xs font-semibold border border-amber-500/30 transition flex items-center space-x-2">
+                        <i class="fa-solid fa-book-open"></i>
+                        <span>View Store Menu</span>
+                    </button>
                     <button onclick="toggleCartDrawer()" class="relative p-2.5 rounded-xl bg-zinc-800 text-zinc-300 hover:text-white transition border border-zinc-700/50">
                         <i class="fa-solid fa-cart-shopping text-lg"></i>
                         <span id="cartBadge" class="absolute -top-1.5 -right-1.5 bg-amber-600 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center shadow">0</span>
                     </button>
-                    <a href="owner.html" class="px-4 py-2.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 hover:text-white text-sm font-semibold border border-zinc-700 transition flex items-center space-x-2">
+                    <a href="owner.html" class="px-3.5 py-2.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 hover:text-white text-xs font-semibold border border-zinc-700 transition flex items-center space-x-2">
                         <i class="fa-solid fa-shield-halved text-amber-500"></i>
                         <span class="hidden sm:inline">Boss Portal</span>
                     </a>
@@ -48,41 +52,56 @@
             </div>
         </header>
 
-        <!-- MAIN MENU -->
+        <!-- HERO SECTION -->
         <main class="flex-grow">
-            <div class="relative bg-gradient-to-r from-zinc-900 via-zinc-900/90 to-amber-950/40 py-16 lg:py-24 border-b border-zinc-800">
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                    <div class="space-y-6 text-center lg:text-left">
-                        <span class="inline-flex items-center gap-1.5 py-1.5 px-3 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-500 border border-amber-500/20">
-                            <i class="fa-solid fa-fire"></i> Freshly Baked Daily & Made to Order
-                        </span>
-                        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-tight">
-                            Legendary Kotas & <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-amber-200">Refreshments</span>
-                        </h1>
-                        <p class="text-lg text-zinc-400 max-w-xl mx-auto lg:mx-0">
-                            Satisfy your cravings with our loaded kasi kotas, creamy gourmet milkshakes, rich coffee, and exotic mocktails delivered right to your door. No account required!
-                        </p>
-                    </div>
+            <div class="relative bg-gradient-to-r from-zinc-900 via-zinc-900/90 to-amber-950/40 py-16 lg:py-20 border-b border-zinc-800">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center lg:text-left space-y-6">
+                    <span class="inline-flex items-center gap-1.5 py-1.5 px-3 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-500 border border-amber-500/20">
+                        <i class="fa-solid fa-fire"></i> Freshly Baked Daily & Made to Order
+                    </span>
+                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-tight">
+                        Village Kotas & <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-amber-200">Chips</span>
+                    </h1>
+                    <p class="text-lg text-zinc-400 max-w-xl">
+                        Satisfy your cravings with our loaded kasi kotas, crispy chips, creamy gourmet milkshakes, and refreshing drinks delivered right to your door.
+                    </p>
                 </div>
             </div>
 
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
-                    <h2 class="text-3xl font-bold text-white tracking-tight">Our Delicious Menu</h2>
+            <!-- MENU ITEMS GRID -->
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+                    <h2 class="text-2xl font-bold text-white tracking-tight">Our Delicious Menu</h2>
                     <div class="flex flex-wrap gap-2 bg-zinc-900 p-1.5 rounded-2xl border border-zinc-800" id="categoryFilters">
-                        <button onclick="filterCategory('All')" class="category-btn px-4 py-2 rounded-xl text-sm font-semibold transition bg-amber-600 text-white shadow">All Items</button>
-                        <button onclick="filterCategory('Kotas')" class="category-btn px-4 py-2 rounded-xl text-sm font-medium transition text-zinc-400 hover:text-white">Kotas</button>
-                        <button onclick="filterCategory('Milkshakes')" class="category-btn px-4 py-2 rounded-xl text-sm font-medium transition text-zinc-400 hover:text-white">Milkshakes</button>
-                        <button onclick="filterCategory('Coffee')" class="category-btn px-4 py-2 rounded-xl text-sm font-medium transition text-zinc-400 hover:text-white">Coffee</button>
-                        <button onclick="filterCategory('Mocktails')" class="category-btn px-4 py-2 rounded-xl text-sm font-medium transition text-zinc-400 hover:text-white">Mocktails</button>
+                        <button onclick="filterCategory('All')" class="category-btn px-4 py-2 rounded-xl text-xs font-semibold transition bg-amber-600 text-white shadow">All Items</button>
+                        <button onclick="filterCategory('Kotas')" class="category-btn px-4 py-2 rounded-xl text-xs font-medium transition text-zinc-400 hover:text-white">Kotas</button>
+                        <button onclick="filterCategory('Milkshakes')" class="category-btn px-4 py-2 rounded-xl text-xs font-medium transition text-zinc-400 hover:text-white">Milkshakes</button>
+                        <button onclick="filterCategory('Coffee')" class="category-btn px-4 py-2 rounded-xl text-xs font-medium transition text-zinc-400 hover:text-white">Coffee</button>
+                        <button onclick="filterCategory('Mocktails')" class="category-btn px-4 py-2 rounded-xl text-xs font-medium transition text-zinc-400 hover:text-white">Mocktails</button>
                     </div>
                 </div>
 
-                <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <!-- Loaded dynamically -->
-                </div>
+                <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"></div>
+            </div>
+
+            <!-- HAPPY CUSTOMERS GALLERY SECTION -->
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 border-t border-zinc-800">
+                <h2 class="text-2xl font-bold text-white mb-6"><i class="fa-solid fa-face-smile text-amber-500 mr-2"></i> Happy Customers Wall</h2>
+                <div id="storeGalleryGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4"></div>
             </div>
         </main>
+
+        <!-- STORE MENU MODAL (SLIDESHOW) -->
+        <div id="storeMenuModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden items-center justify-center p-4">
+            <div class="bg-zinc-900 border border-zinc-800 rounded-3xl max-w-2xl w-full p-6 relative flex flex-col items-center">
+                <button onclick="closeMenuModal()" class="absolute top-4 right-4 text-zinc-400 hover:text-white p-2"><i class="fa-solid fa-xmark text-xl"></i></button>
+                <h3 class="text-xl font-bold text-white mb-4">Official Store Menu</h3>
+                
+                <div id="menuSlideshowContainer" class="w-full flex flex-col items-center">
+                    <!-- Slideshow rendered dynamically -->
+                </div>
+            </div>
+        </div>
 
         <!-- CART DRAWER -->
         <div id="cartDrawer" class="fixed inset-0 z-50 overflow-hidden hidden">
@@ -97,7 +116,7 @@
                     <div class="p-6 border-t border-zinc-800 bg-zinc-900/90 space-y-4">
                         <div class="flex justify-between text-lg font-bold text-white pt-2">
                             <span>Total</span>
-                            <span id="cartTotal" class="text-amber-500">R 25.00</span>
+                            <span id="cartTotal" class="text-amber-500">R 0.00</span>
                         </div>
                         <button onclick="openCheckoutModal()" class="w-full py-3.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-semibold shadow-lg transition">Checkout</button>
                     </div>
@@ -114,7 +133,7 @@
                     <input type="text" id="orderCustName" required placeholder="Your Name" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-2.5 text-white text-sm">
                     <input type="tel" id="orderCustPhone" required placeholder="Phone Number" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-2.5 text-white text-sm">
                     <textarea id="orderCustAddress" rows="2" required placeholder="Delivery Address" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-2.5 text-white text-sm"></textarea>
-                    <button type="submit" class="w-full py-3.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-semibold">Confirm Order</button>
+                    <button type="submit" id="confirmOrderBtn" class="w-full py-3.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-semibold">Confirm Order</button>
                 </form>
             </div>
         </div>
@@ -127,14 +146,21 @@
     </div>
 
     <script>
-        let state = { currentCategory: 'All', cart: [], products: [] };
+        let state = { currentCategory: 'All', cart: [], products: [], storeMenus: [], currentSlide: 0 };
 
         async function initApp() {
             try {
-                const res = await fetch('http://localhost:5501/api/products');
+                const res = await fetch('/api/products');
                 state.products = await res.json();
             } catch (err) { console.error(err); }
+
+            try {
+                const menuRes = await fetch('/api/store-menus');
+                state.storeMenus = await menuRes.json();
+            } catch (err) { console.error(err); }
+
             renderProducts();
+            fetchStoreGallery();
         }
 
         function filterCategory(cat) {
@@ -145,6 +171,8 @@
         function renderProducts() {
             const grid = document.getElementById('productGrid');
             const filtered = state.products.filter(p => state.currentCategory === 'All' || p.category === state.currentCategory);
+            if(!filtered.length) { grid.innerHTML = '<p class="text-zinc-500 text-sm col-span-full">No items found.</p>'; return; }
+
             grid.innerHTML = filtered.map(p => `
                 <div class="bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden shadow-xl flex flex-col justify-between">
                     <img src="${p.image}" class="h-48 w-full object-cover">
@@ -162,6 +190,62 @@
             `).join('');
         }
 
+        async function fetchStoreGallery() {
+            try {
+                const res = await fetch('/api/gallery');
+                const photos = await res.json();
+                const grid = document.getElementById('storeGalleryGrid');
+                if(!photos.length) { grid.innerHTML = '<p class="text-zinc-500 text-xs col-span-full">No customer photos yet.</p>'; return; }
+
+                grid.innerHTML = photos.map(p => `
+                    <div class="bg-zinc-800 rounded-2xl overflow-hidden border border-zinc-700 aspect-square">
+                        <img src="${p.image}" class="w-full h-full object-cover">
+                    </div>
+                `).join('');
+            } catch (err) { console.error(err); }
+        }
+
+        function openMenuModal() {
+            document.getElementById('storeMenuModal').classList.remove('hidden');
+            document.getElementById('storeMenuModal').classList.add('flex');
+            renderSlideshow();
+        }
+
+        function closeMenuModal() {
+            document.getElementById('storeMenuModal').classList.add('hidden');
+            document.getElementById('storeMenuModal').classList.remove('flex');
+        }
+
+        function renderSlideshow() {
+            const container = document.getElementById('menuSlideshowContainer');
+            if(!state.storeMenus.length) {
+                container.innerHTML = '<p class="text-zinc-400 text-sm py-8">No official store menu pictures uploaded yet.</p>';
+                return;
+            }
+
+            const menu = state.storeMenus[state.currentSlide];
+            container.innerHTML = `
+                <div class="w-full h-80 sm:h-96 rounded-2xl overflow-hidden border border-zinc-700 mb-4 bg-black flex items-center justify-center">
+                    <img src="${menu.image}" class="max-h-full max-w-full object-contain">
+                </div>
+                <div class="flex items-center justify-between w-full px-2">
+                    <button onclick="prevSlide()" class="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 text-white rounded-xl text-xs font-semibold"><i class="fa-solid fa-chevron-left mr-1"></i> Previous</button>
+                    <span class="text-xs text-zinc-400 font-medium">Page ${state.currentSlide + 1} of ${state.storeMenus.length}</span>
+                    <button onclick="nextSlide()" class="px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white rounded-xl text-xs font-semibold">Next <i class="fa-solid fa-chevron-right ml-1"></i></button>
+                </div>
+            `;
+        }
+
+        function prevSlide() {
+            state.currentSlide = (state.currentSlide - 1 + state.storeMenus.length) % state.storeMenus.length;
+            renderSlideshow();
+        }
+
+        function nextSlide() {
+            state.currentSlide = (state.currentSlide + 1) % state.storeMenus.length;
+            renderSlideshow();
+        }
+
         function toggleCartDrawer() { document.getElementById('cartDrawer').classList.toggle('hidden'); renderCart(); }
 
         function addToCart(id) {
@@ -175,8 +259,11 @@
         function renderCart() {
             const list = document.getElementById('cartItemsList');
             let sub = state.cart.reduce((a,b)=>a+(b.price*b.quantity),0);
-            list.innerHTML = state.cart.map(i=>`<div class="flex justify-between py-2 text-sm text-white"><span>${i.quantity}x ${i.name}</span><span>R ${(i.price*i.quantity).toFixed(2)}</span></div>`).join('');
-            document.getElementById('cartTotal').textContent = `R ${(sub + (sub>0?25:0)).toFixed(2)}`;
+            if(!state.cart.length) { list.innerHTML = '<p class="text-zinc-500 text-sm">Your basket is empty.</p>'; }
+            else {
+                list.innerHTML = state.cart.map(i=>`<div class="flex justify-between py-2 text-sm text-white"><span>${i.quantity}x ${i.name}</span><span class="text-amber-400 font-bold">R ${(i.price*i.quantity).toFixed(2)}</span></div>`).join('');
+            }
+            document.getElementById('cartTotal').textContent = `R ${sub.toFixed(2)}`;
         }
 
         function openCheckoutModal() { if(!state.cart.length) return showToast('Cart is empty', 'Warning'); toggleCartDrawer(); document.getElementById('checkoutModal').classList.remove('hidden'); document.getElementById('checkoutModal').classList.add('flex'); }
@@ -184,12 +271,16 @@
 
         async function submitInstantOrder(e) {
             e.preventDefault();
+            const btn = document.getElementById('confirmOrderBtn');
+            btn.disabled = true;
+            btn.innerText = 'Placing Order...';
+
             const sub = state.cart.reduce((a,b)=>a+(b.price*b.quantity),0);
             const payload = {
                 customerName: document.getElementById('orderCustName').value,
                 customerPhone: document.getElementById('orderCustPhone').value,
                 address: document.getElementById('orderCustAddress').value,
-                total: sub + 25,
+                total: sub,
                 items: state.cart
             };
             const res = await fetch('/api/orders', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload) });
@@ -199,7 +290,11 @@
                 state.cart = [];
                 document.getElementById('cartBadge').textContent = 0;
                 closeCheckoutModal();
+            } else {
+                alert('Failed to place order.');
             }
+            btn.disabled = false;
+            btn.innerText = 'Confirm Order';
         }
 
         function showToast(msg, title='Cart') {
