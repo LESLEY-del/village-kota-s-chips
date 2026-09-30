@@ -36,9 +36,10 @@
                 </div>
 
                 <div class="flex items-center space-x-3">
-                    <button onclick="openMenuModal()" class="px-3.5 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-amber-400 text-xs font-semibold border border-amber-500/30 transition flex items-center space-x-2">
+                    <span id="storeStatusBadge" class="hidden sm:inline-flex px-3 py-1 rounded-full text-xs font-bold">Checking status...</span>
+                    <button onclick="openMenuModal()" class="px-3 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-amber-400 text-xs font-semibold border border-amber-500/30 transition flex items-center space-x-1.5">
                         <i class="fa-solid fa-book-open"></i>
-                        <span>View Store Menu</span>
+                        <span>Store Menu</span>
                     </button>
                     <button onclick="toggleCartDrawer()" class="relative p-2.5 rounded-xl bg-zinc-800 text-zinc-300 hover:text-white transition border border-zinc-700/50">
                         <i class="fa-solid fa-cart-shopping text-lg"></i>
@@ -63,7 +64,7 @@
                         Village Kotas & <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-amber-200">Chips</span>
                     </h1>
                     <p class="text-lg text-zinc-400 max-w-xl">
-                        Satisfy your cravings with our loaded kasi kotas, crispy chips, creamy gourmet milkshakes, and refreshing drinks delivered right to your door.
+                        Satisfy your cravings with our loaded kasi kotas, crispy chips, creamy gourmet milkshakes, and refreshing drinks delivered right to your door or prepared fresh in-venue.
                     </p>
                 </div>
             </div>
@@ -96,10 +97,7 @@
             <div class="bg-zinc-900 border border-zinc-800 rounded-3xl max-w-2xl w-full p-6 relative flex flex-col items-center">
                 <button onclick="closeMenuModal()" class="absolute top-4 right-4 text-zinc-400 hover:text-white p-2"><i class="fa-solid fa-xmark text-xl"></i></button>
                 <h3 class="text-xl font-bold text-white mb-4">Official Store Menu</h3>
-                
-                <div id="menuSlideshowContainer" class="w-full flex flex-col items-center">
-                    <!-- Slideshow rendered dynamically -->
-                </div>
+                <div id="menuSlideshowContainer" class="w-full flex flex-col items-center"></div>
             </div>
         </div>
 
@@ -118,25 +116,66 @@
                             <span>Total</span>
                             <span id="cartTotal" class="text-amber-500">R 0.00</span>
                         </div>
-                        <button onclick="openCheckoutModal()" class="w-full py-3.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-semibold shadow-lg transition">Checkout</button>
+                        <button onclick="openCheckoutModal()" class="w-full py-3.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-semibold shadow-lg transition">Proceed to Checkout</button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- CHECKOUT MODAL -->
+        <!-- CHECKOUT MODAL (Transport vs In-Venue & Website vs WhatsApp) -->
         <div id="checkoutModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
-            <div class="bg-zinc-900 border border-zinc-800 rounded-3xl max-w-md w-full p-6 relative">
+            <div class="bg-zinc-900 border border-zinc-800 rounded-3xl max-w-md w-full p-6 relative max-h-[90vh] overflow-y-auto">
                 <button onclick="closeCheckoutModal()" class="absolute top-4 right-4 text-zinc-400 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
                 <h3 class="text-xl font-bold text-white mb-4">Complete Your Order</h3>
-                <form onsubmit="submitInstantOrder(event)" class="space-y-4">
-                    <input type="text" id="orderCustName" required placeholder="Your Name" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-2.5 text-white text-sm">
-                    <input type="tel" id="orderCustPhone" required placeholder="Phone Number" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-2.5 text-white text-sm">
-                    <textarea id="orderCustAddress" rows="2" required placeholder="Delivery Address" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-2.5 text-white text-sm"></textarea>
-                    <button type="submit" id="confirmOrderBtn" class="w-full py-3.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-semibold">Confirm Order</button>
+                
+                <form onsubmit="handleCheckoutSubmit(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-xs text-zinc-400 mb-1">Your Name</label>
+                        <input type="text" id="orderCustName" required placeholder="John Doe" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-2.5 text-white text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-zinc-400 mb-1">Phone Number</label>
+                        <input type="tel" id="orderCustPhone" required placeholder="072 123 4567" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-2.5 text-white text-sm">
+                    </div>
+
+                    <!-- Fulfillment Type: Transport (Delivery) vs In-Venue -->
+                    <div>
+                        <label class="block text-xs text-zinc-400 mb-1">Fulfillment Option</label>
+                        <select id="fulfillmentType" onchange="toggleAddressField()" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-2.5 text-white text-sm">
+                            <option value="Delivery">Transport (Delivery)</option>
+                            <option value="In-Venue">In-Venue (Eat-In / Collection)</option>
+                        </select>
+                    </div>
+
+                    <div id="addressFieldContainer">
+                        <label class="block text-xs text-zinc-400 mb-1">Delivery Address</label>
+                        <textarea id="orderCustAddress" rows="2" placeholder="Street address or location" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-2.5 text-white text-sm"></textarea>
+                    </div>
+
+                    <!-- Booking Method: Website vs WhatsApp -->
+                    <div>
+                        <label class="block text-xs text-zinc-400 mb-1">How would you like to place your order?</label>
+                        <div class="grid grid-cols-2 gap-3">
+                            <button type="button" onclick="setBookingMethod('website')" id="methodWebsiteBtn" class="py-2.5 rounded-xl bg-amber-600 text-white text-xs font-bold border border-amber-500 transition">Book via Website</button>
+                            <button type="button" onclick="setBookingMethod('whatsapp')" id="methodWhatsappBtn" class="py-2.5 rounded-xl bg-zinc-800 text-zinc-300 text-xs font-bold border border-zinc-700 transition"><i class="fa-brands fa-whatsapp text-emerald-400 mr-1"></i> Book via WhatsApp</button>
+                        </div>
+                    </div>
+
+                    <button type="submit" id="finalSubmitBtn" class="w-full py-3.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-semibold transition shadow-lg">Confirm Order</button>
                 </form>
             </div>
         </div>
+
+        <!-- TERMS & CONDITIONS AND FOOTER -->
+        <footer class="bg-zinc-950 border-t border-zinc-800/80 py-8 px-4 text-center space-y-4 mt-12">
+            <div class="max-w-4xl mx-auto text-xs text-zinc-400 space-y-1">
+                <p class="font-bold text-zinc-300">Terms & Conditions & Store Policy</p>
+                <p>All orders are freshly prepared upon confirmation. Prices are subject to change without prior notice. Delivery times may vary based on traffic and weather conditions. Payments and bookings are processed securely.</p>
+            </div>
+            <div class="pt-4 border-t border-zinc-900 text-[11px] text-zinc-500">
+                Designed by Lesley Malangana (<span class="text-amber-500 font-medium">Malangana Web Design</span>)
+            </div>
+        </footer>
 
         <!-- TOAST -->
         <div id="toastNotification" class="fixed bottom-6 right-6 z-50 transform translate-y-24 opacity-0 transition-all duration-300 bg-zinc-900 border border-amber-500/40 shadow-2xl rounded-2xl p-4 text-white max-w-sm">
@@ -146,9 +185,16 @@
     </div>
 
     <script>
-        let state = { currentCategory: 'All', cart: [], products: [], storeMenus: [], currentSlide: 0 };
+        let state = { currentCategory: 'All', cart: [], products: [], storeMenus: [], currentSlide: 0, storeSettings: { is_open: true, delivery_available: true }, bookingMethod: 'website' };
+        const BUSINESS_WHATSAPP_NUMBER = '27720000000'; // Replace with actual business WhatsApp number
 
         async function initApp() {
+            try {
+                const settingsRes = await fetch('/api/settings');
+                state.storeSettings = await settingsRes.json();
+                updateStoreStatusBanner();
+            } catch (err) { console.error(err); }
+
             try {
                 const res = await fetch('/api/products');
                 state.products = await res.json();
@@ -161,6 +207,17 @@
 
             renderProducts();
             fetchStoreGallery();
+        }
+
+        function updateStoreStatusBanner() {
+            const badge = document.getElementById('storeStatusBadge');
+            if (state.storeSettings.is_open) {
+                badge.className = "inline-flex px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
+                badge.innerHTML = '<i class="fa-solid fa-circle text-[8px] mr-1.5 my-auto text-emerald-400"></i> Store is OPEN';
+            } else {
+                badge.className = "inline-flex px-3 py-1 rounded-full text-xs font-bold bg-red-500/10 text-red-400 border border-red-500/20";
+                badge.innerHTML = '<i class="fa-solid fa-circle text-[8px] mr-1.5 my-auto text-red-400"></i> Store is CLOSED';
+            }
         }
 
         function filterCategory(cat) {
@@ -249,6 +306,10 @@
         function toggleCartDrawer() { document.getElementById('cartDrawer').classList.toggle('hidden'); renderCart(); }
 
         function addToCart(id) {
+            if(!state.storeSettings.is_open) {
+                alert('Sorry, the store is currently CLOSED. You cannot add items to cart right now.');
+                return;
+            }
             const p = state.products.find(x => x.id == id);
             const item = state.cart.find(x => x.id == id);
             if (item) item.quantity++; else state.cart.push({ ...p, quantity: 1 });
@@ -266,27 +327,80 @@
             document.getElementById('cartTotal').textContent = `R ${sub.toFixed(2)}`;
         }
 
-        function openCheckoutModal() { if(!state.cart.length) return showToast('Cart is empty', 'Warning'); toggleCartDrawer(); document.getElementById('checkoutModal').classList.remove('hidden'); document.getElementById('checkoutModal').classList.add('flex'); }
-        function closeCheckoutModal() { document.getElementById('checkoutModal').classList.add('hidden'); document.getElementById('checkoutModal').classList.remove('flex'); }
+        function openCheckoutModal() { 
+            if(!state.storeSettings.is_open) { alert('Store is currently closed.'); return; }
+            if(!state.cart.length) return showToast('Cart is empty', 'Warning'); 
+            toggleCartDrawer(); 
+            document.getElementById('checkoutModal').classList.remove('hidden'); 
+            document.getElementById('checkoutModal').classList.add('flex'); 
+        }
 
-        async function submitInstantOrder(e) {
+        function closeCheckoutModal() { 
+            document.getElementById('checkoutModal').classList.add('hidden'); 
+            document.getElementById('checkoutModal').classList.remove('flex'); 
+        }
+
+        function toggleAddressField() {
+            const type = document.getElementById('fulfillmentType').value;
+            const container = document.getElementById('addressFieldContainer');
+            if (type === 'In-Venue') {
+                container.style.display = 'none';
+                document.getElementById('orderCustAddress').required = false;
+            } else {
+                container.style.display = 'block';
+                document.getElementById('orderCustAddress').required = true;
+            }
+        }
+
+        function setBookingMethod(method) {
+            state.bookingMethod = method;
+            const webBtn = document.getElementById('methodWebsiteBtn');
+            const waBtn = document.getElementById('methodWhatsappBtn');
+            if (method === 'website') {
+                webBtn.className = "py-2.5 rounded-xl bg-amber-600 text-white text-xs font-bold border border-amber-500 transition";
+                waBtn.className = "py-2.5 rounded-xl bg-zinc-800 text-zinc-300 text-xs font-bold border border-zinc-700 transition";
+            } else {
+                waBtn.className = "py-2.5 rounded-xl bg-emerald-600 text-white text-xs font-bold border border-emerald-500 transition";
+                webBtn.className = "py-2.5 rounded-xl bg-zinc-800 text-zinc-300 text-xs font-bold border border-zinc-700 transition";
+            }
+        }
+
+        async function handleCheckoutSubmit(e) {
             e.preventDefault();
-            const btn = document.getElementById('confirmOrderBtn');
+            const name = document.getElementById('orderCustName').value;
+            const phone = document.getElementById('orderCustPhone').value;
+            const fulfillment = document.getElementById('fulfillmentType').value;
+            const address = fulfillment === 'In-Venue' ? 'In-Venue (Eat-In/Collection)' : document.getElementById('orderCustAddress').value;
+            const sub = state.cart.reduce((a,b)=>a+(b.price*b.quantity),0);
+
+            if (fulfillment === 'Delivery' && !state.storeSettings.delivery_available) {
+                alert('Delivery is currently unavailable. Please choose In-Venue or check back later.');
+                return;
+            }
+
+            if (state.bookingMethod === 'whatsapp') {
+                // Format WhatsApp Cart Message
+                let itemsText = state.cart.map(i => `• ${i.quantity}x ${i.name} (R${(i.price*i.quantity).toFixed(2)})`).join('%0A');
+                let message = `*NEW ORDER BOOKING*%0A%0A*Name:* ${name}%0A*Phone:* ${phone}%0A*Fulfillment:* ${fulfillment}%0A*Address:* ${address}%0A%0A*Items:*%0A${itemsText}%0A%0A*Total Amount:* R${sub.toFixed(2)}`;
+                
+                window.open(`https://wa.me/${BUSINESS_WHATSAPP_NUMBER}?text=${message}`, '_blank');
+                closeCheckoutModal();
+                state.cart = [];
+                document.getElementById('cartBadge').textContent = 0;
+                return;
+            }
+
+            // Otherwise, process through website database backend
+            const btn = document.getElementById('finalSubmitBtn');
             btn.disabled = true;
             btn.innerText = 'Placing Order...';
 
-            const sub = state.cart.reduce((a,b)=>a+(b.price*b.quantity),0);
-            const payload = {
-                customerName: document.getElementById('orderCustName').value,
-                customerPhone: document.getElementById('orderCustPhone').value,
-                address: document.getElementById('orderCustAddress').value,
-                total: sub,
-                items: state.cart
-            };
+            const payload = { customerName: name, customerPhone: phone, address: `${fulfillment}: ${address}`, total: sub, items: state.cart };
             const res = await fetch('/api/orders', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload) });
             const data = await res.json();
+            
             if(res.ok) {
-                showToast(`Order ${data.orderId} placed!`, 'Success');
+                showToast(`Order ${data.orderId} placed successfully!`, 'Success');
                 state.cart = [];
                 document.getElementById('cartBadge').textContent = 0;
                 closeCheckoutModal();
