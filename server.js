@@ -9,7 +9,7 @@ const PORT = process.env.PORT || 5501;
 
 // --- MIDDLEWARE ---
 app.use(cors());
-app.use(express.json({ limit: '30mb' }));
+app.use(express.json({ limit: '10mb' })); // Standard limit now since we use storage links instead of heavy base64 strings
 
 // --- INITIALIZE SUPABASE CLIENT ---
 const supabaseUrl = process.env.SUPABASE_URL;
@@ -17,6 +17,41 @@ const supabaseKey = process.env.SUPABASE_KEY;
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 console.log('✅ Connected to Supabase client successfully!');
+
+// --- HELPER: Upload Base64 or File to Supabase Storage Bucket ---
+async function uploadToSupabaseStorage(base64Data, folder = 'uploads') {
+    try {
+        if (!base64Data || !base64Data.startsWith('data:')) return base64Data; // Return as-is if already a URL
+
+        // Extract file extension and base64 buffer
+        const matches = base64Data.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
+        if (!matches || matches.length !== 3) return base64Data;
+
+        const mimeType = matches.1;
+        const buffer = Buffer.from(matches.2, 'base64');
+        const fileExt = mimeType.split('/')[1] || 'png';
+        const fileName = `${folder}/${Date.now()}-${Math.random().toString(36.substring(2, 7))}.${fileExt}`;
+
+        const { data, error } = await supabase.storage
+            .from('kotas-media')
+            .upload(fileName, buffer, {
+                contentType: mimeType,
+                upsert: true
+            });
+
+        if (error) throw error;
+
+        // Get public URL
+        const { data: publicUrlData } = supabase.storage
+            .from('kotas-media')
+            .getPublicUrl(fileName);
+
+        return publicUrlData.publicUrl;
+    } catch (err) {
+        console.error('Storage upload error:', err.message);
+        return base64Data; // Fallback
+    }
+}
 
 // --- API ROUTES ---
 
@@ -32,7 +67,12 @@ app.get('/api/products', async (req, res) => {
 app.post('/api/products', async (req, res) => {
     try {
         const { name, category, price, image, description } = req.body;
-        const { data, error } = await supabase.from('products').insert([{ name, category: category.trim(), price, image, description }]).select();
+        const imageUrl = await uploadToSupabaseStorage(image, 'products');
+
+        const { data, error } = await supabase.from('products').insert([{ 
+            name, category: category.trim(), price, image: imageUrl, description 
+        }]).select();
+
         if (error) throw error;
         res.json({ message: 'Product added', data });
     } catch (err) { res.status(500).json({ error: err.message }); }
@@ -44,7 +84,9 @@ app.patch('/api/products/:id', async (req, res) => {
         const { price, image } = req.body;
         const updates = {};
         if (price !== undefined) updates.price = price;
-        if (image !== undefined) updates.image = image;
+        if (image !== undefined) {
+            updates.image = await uploadToSupabaseStorage(image, 'products');
+        }
 
         const { data, error } = await supabase.from('products').update(updates).eq('id', id).select();
         if (error) throw error;
@@ -54,8 +96,7 @@ app.patch('/api/products/:id', async (req, res) => {
 
 app.delete('/api/products/:id', async (req, res) => {
     try {
-        const { id } = req.params;
-        const { error } = await supabase.from('products').delete().eq('id', id);
+        const { error } = await supabase.from('products').delete().eq('id', req.params.id);
         if (error) throw error;
         res.json({ message: 'Product deleted' });
     } catch (err) { res.status(500).json({ error: err.message }); }
@@ -137,7 +178,11 @@ app.get('/api/gallery', async (req, res) => {
 app.post('/api/gallery', async (req, res) => {
     try {
         const { images, caption } = req.body;
-        const rows = images.map(img => ({ image: img, caption }));
+        const rows = [];
+        for (const img of images) {
+            const url = await uploadToSupabaseStorage(img, 'gallery');
+            rows.push({ image: url, caption });
+        }
         const { error } = await supabase.from('gallery').insert(rows);
         if (error) throw error;
         res.json({ message: 'Gallery uploaded' });
@@ -183,8 +228,12 @@ app.get('/api/store-menus', async (req, res) => {
 
 app.post('/api/store-menus', async (req, res) => {
     try {
-        const { images } = req.body; // Expects an array of base64 images
-        const rows = images.map(img => ({ image: img }));
+        const { images } = req.body;
+        const rows = [];
+        for (const img of images) {
+            const url = await uploadToSupabaseStorage(img, 'menus');
+            rows.push({ image: url });
+        }
         const { error } = await supabase.from('store_menus').insert(rows);
         if (error) throw error;
         res.json({ message: 'Store menu pictures uploaded successfully' });
