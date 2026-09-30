@@ -53,17 +53,20 @@
             </div>
         </header>
 
-        <!-- HERO SECTION -->
+        <!-- HERO SECTION WITH MENU PICTURE BACKGROUND -->
         <main class="flex-grow">
-            <div class="relative bg-gradient-to-r from-zinc-900 via-zinc-900/90 to-amber-950/40 py-16 lg:py-20 border-b border-zinc-800">
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center lg:text-left space-y-6">
+            <div id="heroSection" class="relative bg-zinc-900 py-20 lg:py-28 border-b border-zinc-800 bg-cover bg-center transition-all duration-500">
+                <!-- Dark gradient overlay so text remains readable over the background menu -->
+                <div class="absolute inset-0 bg-gradient-to-r from-zinc-950 via-zinc-950/90 to-zinc-950/70"></div>
+                
+                <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center lg:text-left space-y-6">
                     <span class="inline-flex items-center gap-1.5 py-1.5 px-3 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-500 border border-amber-500/20">
                         <i class="fa-solid fa-fire"></i> Freshly Baked Daily & Made to Order
                     </span>
                     <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-tight">
                         Village Kotas & <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-amber-200">Chips</span>
                     </h1>
-                    <p class="text-lg text-zinc-400 max-w-xl">
+                    <p class="text-lg text-zinc-300 max-w-xl">
                         Satisfy your cravings with our loaded kasi kotas, crispy chips, creamy gourmet milkshakes, and refreshing drinks delivered right to your door or prepared fresh in-venue.
                     </p>
                 </div>
@@ -122,7 +125,7 @@
             </div>
         </div>
 
-        <!-- CHECKOUT MODAL (Transport vs In-Venue & Website vs WhatsApp) -->
+        <!-- CHECKOUT MODAL -->
         <div id="checkoutModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
             <div class="bg-zinc-900 border border-zinc-800 rounded-3xl max-w-md w-full p-6 relative max-h-[90vh] overflow-y-auto">
                 <button onclick="closeCheckoutModal()" class="absolute top-4 right-4 text-zinc-400 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
@@ -138,7 +141,6 @@
                         <input type="tel" id="orderCustPhone" required placeholder="072 123 4567" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-2.5 text-white text-sm">
                     </div>
 
-                    <!-- Fulfillment Type: Transport (Delivery) vs In-Venue -->
                     <div>
                         <label class="block text-xs text-zinc-400 mb-1">Fulfillment Option</label>
                         <select id="fulfillmentType" onchange="toggleAddressField()" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-2.5 text-white text-sm">
@@ -152,7 +154,6 @@
                         <textarea id="orderCustAddress" rows="2" placeholder="Street address or location" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-2.5 text-white text-sm"></textarea>
                     </div>
 
-                    <!-- Booking Method: Website vs WhatsApp -->
                     <div>
                         <label class="block text-xs text-zinc-400 mb-1">How would you like to place your order?</label>
                         <div class="grid grid-cols-2 gap-3">
@@ -186,7 +187,7 @@
 
     <script>
         let state = { currentCategory: 'All', cart: [], products: [], storeMenus: [], currentSlide: 0, storeSettings: { is_open: true, delivery_available: true }, bookingMethod: 'website' };
-        const BUSINESS_WHATSAPP_NUMBER = '27720000000'; // Replace with actual business WhatsApp number
+        const BUSINESS_WHATSAPP_NUMBER = '27720000000';
 
         async function initApp() {
             try {
@@ -203,8 +204,13 @@
             try {
                 const menuRes = await fetch('/api/store-menus');
                 state.storeMenus = await menuRes.json();
+                if (state.storeMenus.length > 0) {
+                    // Set the first menu picture as the hero section background image
+                    document.getElementById('heroSection').style.backgroundImage = `url('${state.storeMenus[0].image}')`;
+                }
             } catch (err) { console.error(err); }
 
+            state.currentCategory = 'All';
             renderProducts();
             fetchStoreGallery();
         }
@@ -379,7 +385,6 @@
             }
 
             if (state.bookingMethod === 'whatsapp') {
-                // Format WhatsApp Cart Message
                 let itemsText = state.cart.map(i => `• ${i.quantity}x ${i.name} (R${(i.price*i.quantity).toFixed(2)})`).join('%0A');
                 let message = `*NEW ORDER BOOKING*%0A%0A*Name:* ${name}%0A*Phone:* ${phone}%0A*Fulfillment:* ${fulfillment}%0A*Address:* ${address}%0A%0A*Items:*%0A${itemsText}%0A%0A*Total Amount:* R${sub.toFixed(2)}`;
                 
@@ -390,7 +395,6 @@
                 return;
             }
 
-            // Otherwise, process through website database backend
             const btn = document.getElementById('finalSubmitBtn');
             btn.disabled = true;
             btn.innerText = 'Placing Order...';
