@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boss Owner HQ | Kotas & Chill</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>body { font-family: 'Inter', sans-serif; background-color: #121212; color: #f3f4f6; }</style>
+</head>
+<body class="h-full flex flex-col justify-between pb-20">
+
+    <!-- LOGIN SCREEN -->
+    <div id="loginScreen" class="min-h-full flex items-center justify-center p-4">
+        <div class="max-w-md w-full bg-zinc-900 border border-zinc-800 rounded-3xl p-8 shadow-2xl">
+            <h2 class="text-2xl font-bold text-white mb-2">Boss Owner Login</h2>
+            <p class="text-sm text-zinc-400 mb-6">Enter credentials to manage headquarters.</p>
+            <form onsubmit="handleLogin(event)" class="space-y-4">
+                <input type="email" id="loginEmail" required placeholder="owner@kotas.co.za" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-3 text-white text-sm">
+                <input type="password" id="loginPassword" required placeholder="••••••••" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-3 text-white text-sm">
+                <button type="submit" id="loginSubmitBtn" class="w-full py-3.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-semibold transition">Sign In</button>
+            </form>
+            <div class="mt-4 text-center"><a href="index.html" class="text-xs text-zinc-400 hover:text-white">← Back to Storefront</a></div>
+        </div>
+    </div>
+
+    <!-- DASHBOARD SCREEN -->
+    <div id="dashboardScreen" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full flex-grow">
+        
+        <!-- Header & Store Status Controls -->
+        <div class="mb-5 flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-zinc-800 pb-4 gap-3">
+            <div>
+                <h1 class="text-xl sm:text-2xl font-bold text-white">HQ Management Panel</h1>
+                <p class="text-xs text-zinc-400">Control store status and manage operations.</p>
+            </div>
+            
+            <div class="flex flex-wrap items-center gap-2">
+                <button id="storeToggleBtn" onclick="toggleStoreStatus()" class="px-3 py-1.5 rounded-xl text-xs font-bold transition">Store: Loading...</button>
+                <button id="deliveryToggleBtn" onclick="toggleDeliveryStatus()" class="px-3 py-1.5 rounded-xl text-xs font-bold transition">Delivery: Loading...</button>
+                <a href="index.html" class="px-3 py-1.5 rounded-xl bg-zinc-800 text-zinc-200 text-xs font-medium">Storefront</a>
+                <button onclick="handleLogout()" class="px-3 py-1.5 rounded-xl bg-red-600/20 text-red-400 text-xs font-medium">Logout</button>
+            </div>
+        </div>
+
+        <!-- MAIN VIEWS CONTAINER -->
+        <div class="w-full">
+            
+            <!-- VIEW 1: LIVE CUSTOMER ORDERS -->
+            <div id="viewOrders" class="space-y-6">
+                <div class="bg-zinc-900 border border-zinc-800 rounded-3xl p-5">
+                    <h2 class="text-lg font-bold text-white mb-4"><i class="fa-solid fa-receipt mr-2 text-amber-500"></i> Live Customer Orders</h2>
+                    <div id="ownerLiveOrdersList" class="space-y-4"></div>
+                </div>
+            </div>
+
+            <!-- VIEW 2: SETTINGS (Register Boss, Add Menu Item, Upload Menu Picture, Post Happy Customer Photos) -->
+            <div id="viewSettings" class="hidden space-y-6">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    
+                    <!-- Upload Store Menu Picture -->
+                    <div class="bg-zinc-900 border border-zinc-800 rounded-3xl p-5 lg:col-span-2">
+                        <h2 class="text-lg font-bold text-white mb-2"><i class="fa-solid fa-image mr-2 text-amber-500"></i> Upload Official Store Menu Picture</h2>
+                        <p class="text-xs text-zinc-400 mb-3">Upload your printed business menu image so customers can view your official menu on the storefront.</p>
+                        <form onsubmit="handleUploadStoreMenu(event)" class="space-y-3">
+                            <div class="flex flex-col sm:flex-row items-center gap-4">
+                                <input type="file" id="storeMenuImgFile" accept="image/*" required class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white text-xs file:mr-2 file:py-1 file:px-2 file:rounded-lg file:border-0 file:text-xs file:bg-amber-600 file:text-white">
+                                <button type="submit" id="storeMenuSubmitBtn" class="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-semibold text-xs whitespace-nowrap transition">Upload Menu Picture</button>
+                            </div>
+                        </form>
+                        <div id="currentStoreMenuPreview" class="mt-4"></div>
+                    </div>
+
+                    <!-- Add Menu Item -->
+                    <div class="bg-zinc-900 border border-zinc-800 rounded-3xl p-5">
+                        <h2 class="text-lg font-bold text-white mb-3"><i class="fa-solid fa-burger mr-2 text-amber-500"></i> Add Menu Item</h2>
+                        <form onsubmit="handleAddNewMenuItem(event)" class="space-y-3">
+                            <input type="text" id="newItemName" required placeholder="Item Name" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white text-xs">
+                            <input type="text" id="newItemCategory" required placeholder="Category (e.g. Kotas, Drinks)" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white text-xs">
+                            <input type="number" step="0.01" id="newItemPrice" required placeholder="Price (R)" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white text-xs">
+                            <div>
+                                <label class="block text-[11px] text-zinc-400 mb-1">Product Image</label>
+                                <input type="file" id="newItemImageFile" accept="image/*" required class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-1.5 text-white text-xs file:mr-2 file:py-0.5 file:px-2 file:rounded-md file:border-0 file:text-[11px] file:bg-amber-600 file:text-white">
+                            </div>
+                            <textarea id="newItemDesc" rows="2" required placeholder="Description" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white text-xs"></textarea>
+                            <button type="submit" id="menuItemSubmitBtn" class="w-full py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-semibold text-xs transition">Publish Item</button>
+                        </form>
+                    </div>
+
+                    <!-- Post Happy Customers Photos (Multiple) -->
+                    <div class="bg-zinc-900 border border-zinc-800 rounded-3xl p-5">
+                        <h2 class="text-lg font-bold text-white mb-2"><i class="fa-solid fa-camera mr-2 text-amber-500"></i> Post Happy Customers</h2>
+                        <p class="text-xs text-zinc-400 mb-3">Select and upload multiple customer pictures at once.</p>
+                        <form onsubmit="handleUploadGallery(event)" class="space-y-3">
+                            <div>
+                                <input type="file" id="galleryImagesFile" accept="image/*" multiple required class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-1.5 text-white text-xs file:mr-2 file:py-0.5 file:px-2 file:rounded-md file:border-0 file:text-[11px] file:bg-zinc-700 file:text-white">
+                            </div>
+                            <input type="text" id="galleryCaption" placeholder="Caption (e.g. Weekend vibes!)" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white text-xs">
+                            <button type="submit" id="gallerySubmitBtn" class="w-full py-2.5 rounded-xl bg-zinc-700 hover:bg-zinc-600 text-white font-semibold text-xs transition">Upload Photos</button>
+                        </form>
+                        <div id="ownerGalleryGrid" class="grid grid-cols-4 gap-2 mt-3 max-h-[140px] overflow-y-auto"></div>
+                    </div>
+
+                    <!-- Register New Boss -->
+                    <div class="bg-zinc-900 border border-zinc-800 rounded-3xl p-5 lg:col-span-2">
+                        <h2 class="text-base font-bold text-white mb-2"><i class="fa-solid fa-user-plus mr-2 text-amber-500"></i> Register New Boss</h2>
+                        <form onsubmit="handleRegisterBoss(event)" class="space-y-3">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <input type="email" id="newBossEmail" required placeholder="newboss@kotas.co.za" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white text-xs">
+                                <input type="password" id="newBossPassword" required placeholder="Temporary Password" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white text-xs">
+                            </div>
+                            <button type="submit" id="bossSubmitBtn" class="w-full py-2.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 font-semibold text-xs border border-zinc-700 transition">Register Boss Account</button>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- VIEW 3: ACTIVE MENU & PRICES (Buyer View Style + Deletion) -->
+            <div id="viewMenu" class="hidden space-y-6">
+                <div class="bg-zinc-900 border border-zinc-800 rounded-3xl p-5">
+                    <h2 class="text-xl font-bold text-white mb-2"><i class="fa-solid fa-utensils mr-2 text-amber-500"></i> Active Menu & Prices (Buyer Preview)</h2>
+                    <p class="text-xs text-zinc-400 mb-6">Review active menu items as buyers see them. You can delete any item if a price or detail is wrong.</p>
+                    
+                    <div id="ownerBuyerStyleMenuList" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- COMPACT FIXED BOTTOM NAVIGATION FOOTER BUTTONS -->
+    <div id="navFooter" class="hidden fixed bottom-0 left-0 right-0 bg-zinc-950/95 backdrop-blur-md border-t border-zinc-800 py-2 px-3 z-50">
+        <div class="max-w-xs mx-auto grid grid-cols-3 gap-2">
+            <button onclick="switchView('orders')" id="navBtn1" class="flex flex-col items-center justify-center py-1.5 rounded-xl bg-amber-600 text-white text-[11px] font-bold transition shadow">
+                <i class="fa-solid fa-receipt text-sm mb-0.5"></i>
+                Orders
+            </button>
+            <button onclick="switchView('settings')" id="navBtn2" class="flex flex-col items-center justify-center py-1.5 rounded-xl bg-zinc-900 text-zinc-400 hover:text-white text-[11px] font-bold transition border border-zinc-800">
+                <i class="fa-solid fa-gear text-sm mb-0.5"></i>
+                Settings
+            </button>
+            <button onclick="switchView('menu')" id="navBtn3" class="flex flex-col items-center justify-center py-1.5 rounded-xl bg-zinc-900 text-zinc-400 hover:text-white text-[11px] font-bold transition border border-zinc-800">
+                <i class="fa-solid fa-utensils text-sm mb-0.5"></i>
+                Menu
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let currentStoreSettings = { is_open: true, delivery_available: true };
+
+        window.onload = function() {
+            if(localStorage.getItem('kotas_owner_logged_in') === 'true') showDashboard();
+        }
+
+        function switchView(view) {
+            const vOrders = document.getElementById('viewOrders');
+            const vSettings = document.getElementById('viewSettings');
+            const vMenu = document.getElementById('viewMenu');
+
+            const b1 = document.getElementById('navBtn1');
+            const b2 = document.getElementById('navBtn2');
+            const b3 = document.getElementById('navBtn3');
+
+            vOrders.classList.add('hidden');
+            vSettings.classList.add('hidden');
+            vMenu.classList.add('hidden');
+
+            b1.className = "flex flex-col items-center justify-center py-1.5 rounded-xl bg-zinc-900 text-zinc-400 hover:text-white text-[11px] font-bold transition border border-zinc-800";
+            b2.className = "flex flex-col items-center justify-center py-1.5 rounded-xl bg-zinc-900 text-zinc-400 hover:text-white text-[11px] font-bold transition border border-zinc-800";
+            b3.className = "flex flex-col items-center justify-center py-1.5 rounded-xl bg-zinc-900 text-zinc-400 hover:text-white text-[11px] font-bold transition border border-zinc-800";
+
+            if(view === 'orders') {
+                vOrders.classList.remove('hidden');
+                b1.className = "flex flex-col items-center justify-center py-1.5 rounded-xl bg-amber-600 text-white text-[11px] font-bold transition shadow";
+            } else if(view === 'settings') {
+                vSettings.classList.remove('hidden');
+                b2.className = "flex flex-col items-center justify-center py-1.5 rounded-xl bg-amber-600 text-white text-[11px] font-bold transition shadow";
+            } else if(view === 'menu') {
+                vMenu.classList.remove('hidden');
+                b3.className = "flex flex-col items-center justify-center py-1.5 rounded-xl bg-amber-600 text-white text-[11px] font-bold transition shadow";
+            }
+        }
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            const btn = document.getElementById('loginSubmitBtn');
+            btn.disabled = true;
+            btn.innerText = 'Signing In...';
+
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+
+            try {
+                const res = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                const data = await res.json();
+                if (res.ok && data.success) {
+                    localStorage.setItem('kotas_owner_logged_in', 'true');
+                    showDashboard();
+                } else {
+                    alert(data.error || 'Invalid credentials');
+                    btn.disabled = false;
+                    btn.innerText = 'Sign In';
+                }
+            } catch (err) {
+                alert('Network error connecting to server');
+                btn.disabled = false;
+                btn.innerText = 'Sign In';
+            }
+        }
+        
+        function handleLogout() {
+            localStorage.removeItem('kotas_owner_logged_in');
+            document.getElementById('dashboardScreen').classList.add('hidden');
+            document.getElementById('navFooter').classList.add('hidden');
+            document.getElementById('loginScreen').classList.remove('hidden');
+            document.getElementById('loginScreen').classList.add('flex');
+        }
+
+        async function showDashboard() {
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('dashboardScreen').classList.remove('hidden');
+            document.getElementById('navFooter').classList.remove('hidden');
+            await fetchStoreSettings();
+            await fetchStoreMenuImage();
+            await fetchOrders();
+            await fetchBuyerStyleMenuList();
+            await fetchGallery();
+        }
+
+        async function fetchStoreSettings() {
+            try {
+                const res = await fetch('/api/settings');
+                currentStoreSettings = await res.json();
+                updateStoreButtonsUI();
+            } catch (err) {
+                console.error('Error fetching settings:', err);
+            }
+        }
+
+        function updateStoreButtonsUI() {
+            const storeBtn = document.getElementById('storeToggleBtn');
+            const deliveryBtn = document.getElementById('deliveryToggleBtn');
+
+            if (currentStoreSettings.is_open) {
+                storeBtn.className = "px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-600 text-white shadow transition";
+                storeBtn.innerText = "Store: OPEN";
+            } else {
+                storeBtn.className = "px-3 py-1.5 rounded-xl text-xs font-bold bg-red-600 text-white shadow transition";
+                storeBtn.innerText = "Store: CLOSED";
+            }
+
+            if (currentStoreSettings.delivery_available) {
+                deliveryBtn.className = "px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-600 text-white shadow transition";
+                deliveryBtn.innerText = "Delivery: AVAILABLE";
+            } else {
+                deliveryBtn.className = "px-3 py-1.5 rounded-xl text-xs font-bold bg-red-600 text-white shadow transition";
+                deliveryBtn.innerText = "Delivery: UNAVAILABLE";
+            }
+        }
+
+        async function toggleStoreStatus() {
+            const newState = !currentStoreSettings.is_open;
+            const res = await fetch('/api/settings', {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ is_open: newState })
+            });
+            if (res.ok) {
+                currentStoreSettings.is_open = newState;
+                updateStoreButtonsUI();
+            }
+        }
+
+        async function toggleDeliveryStatus() {
+            const newState = !currentStoreSettings.delivery_available;
+            const res = await fetch('/api/settings', {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ delivery_available: newState })
+            });
+            if (res.ok) {
+                currentStoreSettings.delivery_available = newState;
+                updateStoreButtonsUI();
+            }
+        }
+
+        function convertFileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
+            });
+        }
+
+        // Store Menu Picture Handler
+        async function fetchStoreMenuImage() {
+            try {
+                const res = await fetch('/api/store-menu-image');
+                const data = await res.json();
+                const preview = document.getElementById('currentStoreMenuPreview');
+                if(data && data.image) {
+                    preview.innerHTML = `
+                        <p class="text-[11px] text-zinc-400 mb-1">Current Store Menu Preview:</p>
+                        <div class="h-32 w-full sm:w-48 rounded-xl overflow-hidden border border-zinc-700">
+                            <img src="${data.image}" class="w-full h-full object-cover">
+                        </div>
+                    `;
+                } else {
+                    preview.innerHTML = `<p class="text-[11px] text-zinc-500">No official store menu picture uploaded yet.</p>`;
+                }
+            } catch (err) {
+                console.error('Error fetching store menu image:', err);
+            }
+        }
+
+        async function handleUploadStoreMenu(e) {
+            e.preventDefault();
+            const btn = document.getElementById('storeMenuSubmitBtn');
+            btn.disabled = true;
+            btn.innerText = 'Uploading...';
+
+            const fileInput = document.getElementById('storeMenuImgFile');
+            if(!fileInput.files[0]) { btn.disabled = false; btn.innerText = 'Upload Menu Picture'; return; }
+
+            const imageBase64 = await convertFileToBase64(fileInput.files[0]);
+
+            const res = await fetch('/api/store-menu-image', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ image: imageBase64 })
+            });
+
+            if(res.ok) {
+                alert('Official store menu picture updated successfully!');
+                e.target.reset();
+                fetchStoreMenuImage();
+            } else {
+                alert('Failed to update menu picture.');
+            }
+            btn.disabled = false;
+            btn.innerText = 'Upload Menu Picture';
+        }
+
+        async function fetchOrders() {
+            const res = await fetch('/api/orders');
+            const orders = await res.json();
+            const list = document.getElementById('ownerLiveOrdersList');
+            if(!orders.length) { list.innerHTML = '<p class="text-zinc-500 text-sm">No orders yet.</p>'; return; }
+            
+            list.innerHTML = orders.map(o => `
+                <div class="p-4 rounded-2xl bg-zinc-800/80 border border-zinc-700 space-y-3">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <span class="font-bold text-white text-base">${o.order_code}</span> 
+                            <span class="ml-2 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-400">${o.status}</span>
+                        </div>
+                        <div class="text-xs text-zinc-400">Total: <span class="text-white font-bold">R${o.total_amount.toFixed(2)}</span></div>
+                    </div>
+                    <div class="text-xs text-zinc-300 bg-zinc-900/50 p-3 rounded-xl border border-zinc-700/50 space-y-1">
+                        <p><strong>Customer:</strong> ${o.customer_name} (${o.customer_phone})</p>
+                        <p><strong>Address:</strong> ${o.delivery_address}</p>
+                        <div class="mt-2 pt-2 border-t border-zinc-800">
+                            <strong>Items Ordered:</strong>
+                            <ul class="list-disc list-inside mt-1 text-zinc-400">
+                                ${o.order_items ? o.order_items.map(item => `<li>${item.quantity}x${item.item_name} (R${item.price}) ${item.addons ? `— <span class="text-amber-300">(${item.addons})</span>` : ''}</li>`).join('') : ''}
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="flex justify-end space-x-2">
+                        <button onclick="updateStatus('${o.order_code}', 'Preparing')" class="px-3 py-1.5 bg-zinc-700 text-xs rounded-xl text-white font-medium">Prep</button>
+                        <button onclick="updateStatus('${o.order_code}', 'Ready')" class="px-3 py-1.5 bg-amber-600 text-xs rounded-xl text-white font-medium">Ready</button>
+                        <button onclick="updateStatus('${o.order_code}', 'Delivered')" class="px-3 py-1.5 bg-emerald-600 text-xs rounded-xl text-white font-medium">Done</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function updateStatus(code, status) {
+            await fetch(`/api/orders/${code}`, { method: 'PATCH', headers: {'Content-Type':'application/json'}, body: JSON.stringify({status}) });
+            fetchOrders();
+        }
+
+        async function fetchBuyerStyleMenuList() {
+            const res = await fetch('/api/products');
+            const products = await res.json();
+            const list = document.getElementById('ownerBuyerStyleMenuList');
+            if(!products.length) { list.innerHTML = '<p class="text-zinc-500 text-sm col-span-full">No active menu items found.</p>'; return; }
+
+            list.innerHTML = products.map(p => `
+                <div class="bg-zinc-800 border border-zinc-700 rounded-3xl overflow-hidden shadow-xl flex flex-col justify-between">
+                    <div>
+                        <div class="h-44 w-full overflow-hidden relative">
+                            <img src="${p.image}" class="w-full h-full object-cover">
+                            <span class="absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-semibold bg-black/60 backdrop-blur-md text-amber-400 border border-zinc-700">${p.category}</span>
+                        </div>
+                        <div class="p-4 space-y-1.5">
+                            <h3 class="text-base font-bold text-white">${p.name}</h3>
+                            <p class="text-xs text-zinc-400 leading-relaxed">${p.description}</p>
+                        </div>
+                    </div>
+                    <div class="p-4 pt-0 flex items-center justify-between border-t border-zinc-700/50 mt-3">
+                        <span class="text-sm font-bold text-amber-400">R${p.price.toFixed(2)}</span>
+                        <button onclick="deleteMenuItem(${p.id})" class="px-3 py-1.5 bg-red-600/20 hover:bg-red-600 text-red-400 hover:text-white text-xs font-semibold rounded-xl transition">
+                            <i class="fa-solid fa-trash mr-1"></i> Delete Item
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function deleteMenuItem(id) {
+            if(!confirm('Are you sure you want to delete this menu item?')) return;
+            const res = await fetch(`/api/products/${id}`, { method: 'DELETE' });
+            if(res.ok) {
+                fetchBuyerStyleMenuList();
+            } else {
+                alert('Failed to delete item.');
+            }
+        }
+
+        async function handleAddNewMenuItem(e) {
+            e.preventDefault();
+            const btn = document.getElementById('menuItemSubmitBtn');
+            btn.disabled = true;
+            btn.innerText = 'Publishing...';
+
+            const fileInput = document.getElementById('newItemImageFile');
+            let imageBase64 = '';
+            if (fileInput.files[0]) {
+                imageBase64 = await convertFileToBase64(fileInput.files[0]);
+            }
+
+            const body = {
+                name: document.getElementById('newItemName').value,
+                category: document.getElementById('newItemCategory').value,
+                price: parseFloat(document.getElementById('newItemPrice').value),
+                image: imageBase64,
+                description: document.getElementById('newItemDesc').value
+            };
+
+            const res = await fetch('/api/products', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body) });
+            if(res.ok) {
+                alert('Menu item published successfully!');
+                e.target.reset();
+                fetchBuyerStyleMenuList();
+            }
+            btn.disabled = false;
+            btn.innerText = 'Publish Item';
+        }
+
+        async function fetchGallery() {
+            const res = await fetch('/api/gallery');
+            const photos = await res.json();
+            const grid = document.getElementById('ownerGalleryGrid');
+            if(!photos.length) { grid.innerHTML = '<p class="text-zinc-500 text-xs col-span-full">No gallery photos yet.</p>'; return; }
+
+            grid.innerHTML = photos.map(p => `
+                <div class="relative group bg-zinc-800 rounded-xl overflow-hidden border border-zinc-700 aspect-square">
+                    <img src="${p.image}" class="w-full h-full object-cover">
+                    <button onclick="deleteGalleryPhoto(${p.id})" class="absolute top-1 right-1 bg-red-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] opacity-80 hover:opacity-100">×</button>
+                </div>
+            `).join('');
+        }
+
+        async function handleUploadGallery(e) {
+            e.preventDefault();
+            const btn = document.getElementById('gallerySubmitBtn');
+            btn.disabled = true;
+            btn.innerText = 'Uploading...';
+
+            const fileInput = document.getElementById('galleryImagesFile');
+            const caption = document.getElementById('galleryCaption').value;
+
+            if (!fileInput.files.length) { btn.disabled = false; btn.innerText = 'Upload Photos'; return; }
+
+            const base64Promises = Array.from(fileInput.files).map(file => convertFileToBase64(file));
+            const imagesArray = await Promise.all(base64Promises);
+
+            const res = await fetch('/api/gallery', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ images: imagesArray, caption })
+            });
+
+            if (res.ok) {
+                alert('Happy customer photos uploaded successfully!');
+                e.target.reset();
+                fetchGallery();
+            } else {
+                alert('Failed to upload photos.');
+            }
+            btn.disabled = false;
+            btn.innerText = 'Upload Photos';
+        }
+
+        async function deleteGalleryPhoto(id) {
+            const res = await fetch(`/api/gallery/${id}`, { method: 'DELETE' });
+            if(res.ok) fetchGallery();
+        }
+
+        async function handleRegisterBoss(e) {
+            e.preventDefault();
+            const btn = document.getElementById('bossSubmitBtn');
+            btn.disabled = true;
+            btn.innerText = 'Registering...';
+
+            const email = document.getElementById('newBossEmail').value.trim();
+            const password = document.getElementById('newBossPassword').value;
+
+            const res = await fetch('/api/register-boss', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+            const data = await res.json();
+            if (res.ok && data.success) {
+                alert('New boss account registered securely!');
+                e.target.reset();
+            } else {
+                alert(data.error || 'Failed to register');
+            }
+            btn.disabled = false;
+            btn.innerText = 'Register Boss Account';
+        }
+    </script>
+</body>
+</html>

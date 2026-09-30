@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kotas & Chill | Premium Fast Food & Beverages</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: { brand: { 500: '#d97706', 600: '#b45309' } }
+                }
+            }
+        }
+    </script>
+    <style>body { font-family: 'Inter', sans-serif; background-color: #121212; color: #f3f4f6; }</style>
+</head>
+<body class="h-full flex flex-col justify-between selection:bg-amber-500 selection:text-white">
+
+    <div class="min-h-full flex flex-col justify-between">
+        <!-- HEADER -->
+        <header class="sticky top-0 z-50 bg-zinc-900/95 backdrop-blur border-b border-zinc-800">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+                <div class="flex items-center space-x-3 cursor-pointer" onclick="window.scrollTo({top:0, behavior:'smooth'})">
+                    <div class="w-10 h-10 rounded-xl bg-amber-600 flex items-center justify-center shadow-lg shadow-amber-600/30">
+                        <i class="fa-solid fa-burger text-white text-lg"></i>
+                    </div>
+                    <div>
+                        <span class="text-xl font-bold tracking-tight text-white">Kotas & <span class="text-amber-500">Chill</span></span>
+                        <span class="block text-xs text-zinc-400 font-medium">Gourmet Street Food & Drinks</span>
+                    </div>
+                </div>
+
+                <div class="flex items-center space-x-4">
+                    <button onclick="toggleCartDrawer()" class="relative p-2.5 rounded-xl bg-zinc-800 text-zinc-300 hover:text-white transition border border-zinc-700/50">
+                        <i class="fa-solid fa-cart-shopping text-lg"></i>
+                        <span id="cartBadge" class="absolute -top-1.5 -right-1.5 bg-amber-600 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center shadow">0</span>
+                    </button>
+                    <a href="owner.html" class="px-4 py-2.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 hover:text-white text-sm font-semibold border border-zinc-700 transition flex items-center space-x-2">
+                        <i class="fa-solid fa-shield-halved text-amber-500"></i>
+                        <span class="hidden sm:inline">Boss Portal</span>
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <!-- MAIN MENU -->
+        <main class="flex-grow">
+            <div class="relative bg-gradient-to-r from-zinc-900 via-zinc-900/90 to-amber-950/40 py-16 lg:py-24 border-b border-zinc-800">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                    <div class="space-y-6 text-center lg:text-left">
+                        <span class="inline-flex items-center gap-1.5 py-1.5 px-3 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-500 border border-amber-500/20">
+                            <i class="fa-solid fa-fire"></i> Freshly Baked Daily & Made to Order
+                        </span>
+                        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-tight">
+                            Legendary Kotas & <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-amber-200">Refreshments</span>
+                        </h1>
+                        <p class="text-lg text-zinc-400 max-w-xl mx-auto lg:mx-0">
+                            Satisfy your cravings with our loaded kasi kotas, creamy gourmet milkshakes, rich coffee, and exotic mocktails delivered right to your door. No account required!
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
+                    <h2 class="text-3xl font-bold text-white tracking-tight">Our Delicious Menu</h2>
+                    <div class="flex flex-wrap gap-2 bg-zinc-900 p-1.5 rounded-2xl border border-zinc-800" id="categoryFilters">
+                        <button onclick="filterCategory('All')" class="category-btn px-4 py-2 rounded-xl text-sm font-semibold transition bg-amber-600 text-white shadow">All Items</button>
+                        <button onclick="filterCategory('Kotas')" class="category-btn px-4 py-2 rounded-xl text-sm font-medium transition text-zinc-400 hover:text-white">Kotas</button>
+                        <button onclick="filterCategory('Milkshakes')" class="category-btn px-4 py-2 rounded-xl text-sm font-medium transition text-zinc-400 hover:text-white">Milkshakes</button>
+                        <button onclick="filterCategory('Coffee')" class="category-btn px-4 py-2 rounded-xl text-sm font-medium transition text-zinc-400 hover:text-white">Coffee</button>
+                        <button onclick="filterCategory('Mocktails')" class="category-btn px-4 py-2 rounded-xl text-sm font-medium transition text-zinc-400 hover:text-white">Mocktails</button>
+                    </div>
+                </div>
+
+                <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- Loaded dynamically -->
+                </div>
+            </div>
+        </main>
+
+        <!-- CART DRAWER -->
+        <div id="cartDrawer" class="fixed inset-0 z-50 overflow-hidden hidden">
+            <div class="absolute inset-0 bg-black/70 backdrop-blur-sm transition-opacity" onclick="toggleCartDrawer()"></div>
+            <div class="absolute inset-y-0 right-0 max-w-full flex pl-10">
+                <div class="w-screen max-w-md bg-zinc-900 border-l border-zinc-800 flex flex-col shadow-2xl">
+                    <div class="p-6 border-b border-zinc-800 flex items-center justify-between">
+                        <h2 class="text-xl font-bold text-white"><i class="fa-solid fa-basket-shopping text-amber-500 mr-2"></i> Your Basket</h2>
+                        <button onclick="toggleCartDrawer()" class="text-zinc-400 hover:text-white p-2"><i class="fa-solid fa-xmark text-xl"></i></button>
+                    </div>
+                    <div id="cartItemsList" class="flex-grow overflow-y-auto p-6 space-y-4 divide-y divide-zinc-800/60"></div>
+                    <div class="p-6 border-t border-zinc-800 bg-zinc-900/90 space-y-4">
+                        <div class="flex justify-between text-lg font-bold text-white pt-2">
+                            <span>Total</span>
+                            <span id="cartTotal" class="text-amber-500">R 25.00</span>
+                        </div>
+                        <button onclick="openCheckoutModal()" class="w-full py-3.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-semibold shadow-lg transition">Checkout</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CHECKOUT MODAL -->
+        <div id="checkoutModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
+            <div class="bg-zinc-900 border border-zinc-800 rounded-3xl max-w-md w-full p-6 relative">
+                <button onclick="closeCheckoutModal()" class="absolute top-4 right-4 text-zinc-400 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
+                <h3 class="text-xl font-bold text-white mb-4">Complete Your Order</h3>
+                <form onsubmit="submitInstantOrder(event)" class="space-y-4">
+                    <input type="text" id="orderCustName" required placeholder="Your Name" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-2.5 text-white text-sm">
+                    <input type="tel" id="orderCustPhone" required placeholder="Phone Number" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-2.5 text-white text-sm">
+                    <textarea id="orderCustAddress" rows="2" required placeholder="Delivery Address" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-2.5 text-white text-sm"></textarea>
+                    <button type="submit" class="w-full py-3.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-semibold">Confirm Order</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- TOAST -->
+        <div id="toastNotification" class="fixed bottom-6 right-6 z-50 transform translate-y-24 opacity-0 transition-all duration-300 bg-zinc-900 border border-amber-500/40 shadow-2xl rounded-2xl p-4 text-white max-w-sm">
+            <h4 id="toastTitle" class="text-sm font-bold">Notification</h4>
+            <p id="toastMessage" class="text-xs text-zinc-400">Done</p>
+        </div>
+    </div>
+
+    <script>
+        let state = { currentCategory: 'All', cart: [], products: [] };
+
+        async function initApp() {
+            try {
+                const res = await fetch('http://localhost:5501/api/products');
+                state.products = await res.json();
+            } catch (err) { console.error(err); }
+            renderProducts();
+        }
+
+        function filterCategory(cat) {
+            state.currentCategory = cat;
+            renderProducts();
+        }
+
+        function renderProducts() {
+            const grid = document.getElementById('productGrid');
+            const filtered = state.products.filter(p => state.currentCategory === 'All' || p.category === state.currentCategory);
+            grid.innerHTML = filtered.map(p => `
+                <div class="bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden shadow-xl flex flex-col justify-between">
+                    <img src="${p.image}" class="h-48 w-full object-cover">
+                    <div class="p-5 flex flex-col flex-grow justify-between space-y-4">
+                        <div>
+                            <h3 class="text-lg font-bold text-white">${p.name}</h3>
+                            <p class="text-xs text-zinc-400 mt-1">${p.description}</p>
+                        </div>
+                        <div class="flex items-center justify-between pt-2 border-t border-zinc-800">
+                            <span class="text-lg font-extrabold text-amber-500">R ${parseFloat(p.price).toFixed(2)}</span>
+                            <button onclick="addToCart('${p.id}')" class="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-white text-xs font-semibold">Add</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function toggleCartDrawer() { document.getElementById('cartDrawer').classList.toggle('hidden'); renderCart(); }
+
+        function addToCart(id) {
+            const p = state.products.find(x => x.id == id);
+            const item = state.cart.find(x => x.id == id);
+            if (item) item.quantity++; else state.cart.push({ ...p, quantity: 1 });
+            document.getElementById('cartBadge').textContent = state.cart.reduce((a,b)=>a+b.quantity,0);
+            showToast(`Added ${p.name}`);
+        }
+
+        function renderCart() {
+            const list = document.getElementById('cartItemsList');
+            let sub = state.cart.reduce((a,b)=>a+(b.price*b.quantity),0);
+            list.innerHTML = state.cart.map(i=>`<div class="flex justify-between py-2 text-sm text-white"><span>${i.quantity}x ${i.name}</span><span>R ${(i.price*i.quantity).toFixed(2)}</span></div>`).join('');
+            document.getElementById('cartTotal').textContent = `R ${(sub + (sub>0?25:0)).toFixed(2)}`;
+        }
+
+        function openCheckoutModal() { if(!state.cart.length) return showToast('Cart is empty', 'Warning'); toggleCartDrawer(); document.getElementById('checkoutModal').classList.remove('hidden'); document.getElementById('checkoutModal').classList.add('flex'); }
+        function closeCheckoutModal() { document.getElementById('checkoutModal').classList.add('hidden'); document.getElementById('checkoutModal').classList.remove('flex'); }
+
+        async function submitInstantOrder(e) {
+            e.preventDefault();
+            const sub = state.cart.reduce((a,b)=>a+(b.price*b.quantity),0);
+            const payload = {
+                customerName: document.getElementById('orderCustName').value,
+                customerPhone: document.getElementById('orderCustPhone').value,
+                address: document.getElementById('orderCustAddress').value,
+                total: sub + 25,
+                items: state.cart
+            };
+            const res = await fetch('/api/orders', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+            const data = await res.json();
+            if(res.ok) {
+                showToast(`Order ${data.orderId} placed!`, 'Success');
+                state.cart = [];
+                document.getElementById('cartBadge').textContent = 0;
+                closeCheckoutModal();
+            }
+        }
+
+        function showToast(msg, title='Cart') {
+            const t = document.getElementById('toastNotification');
+            document.getElementById('toastTitle').textContent = title;
+            document.getElementById('toastMessage').textContent = msg;
+            t.classList.remove('translate-y-24', 'opacity-0');
+            setTimeout(() => t.classList.add('translate-y-24', 'opacity-0'), 3000);
+        }
+
+        window.onload = initApp;
+    </script>
+</body>
+</html>
