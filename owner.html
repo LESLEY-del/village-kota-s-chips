@@ -2,9 +2,8 @@
 <html lang="en" class="h-full">
 <head>
     <meta charset="UTF-8">
-    <!-- Fixed viewport scaling to stop mobile automatic zooming -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Boss Owner HQ | Kotas & Chill</title>
+    <title>Boss Owner HQ | Village Kotas Chips</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -29,7 +28,6 @@
     <!-- DASHBOARD SCREEN -->
     <div id="dashboardScreen" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full flex-grow">
         
-        <!-- Header & Store Status Controls -->
         <div class="mb-5 flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-zinc-800 pb-4 gap-3">
             <div>
                 <h1 class="text-xl sm:text-2xl font-bold text-white">HQ Management Panel</h1>
@@ -44,7 +42,6 @@
             </div>
         </div>
 
-        <!-- MAIN VIEWS CONTAINER -->
         <div class="w-full">
             
             <!-- VIEW 1: LIVE CUSTOMER ORDERS -->
@@ -55,21 +52,21 @@
                 </div>
             </div>
 
-            <!-- VIEW 2: SETTINGS (Register Boss, Add Menu Item, Upload Menu Picture, Post Happy Customer Photos) -->
+            <!-- VIEW 2: SETTINGS (Multi-Menu Uploads, Add Item, Gallery, Register Boss) -->
             <div id="viewSettings" class="hidden space-y-6">
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     
-                    <!-- Upload Store Menu Picture -->
+                    <!-- Upload Store Menu Pictures (Multiple pages) -->
                     <div class="bg-zinc-900 border border-zinc-800 rounded-3xl p-5 lg:col-span-2">
-                        <h2 class="text-lg font-bold text-white mb-2"><i class="fa-solid fa-image mr-2 text-amber-500"></i> Upload Official Store Menu Picture</h2>
-                        <p class="text-xs text-zinc-400 mb-3">Upload your printed business menu image so customers can view your official menu on the storefront.</p>
-                        <form onsubmit="handleUploadStoreMenu(event)" class="space-y-3">
+                        <h2 class="text-lg font-bold text-white mb-2"><i class="fa-solid fa-images mr-2 text-amber-500"></i> Upload Store Menu Pictures (Multi-page slideshow)</h2>
+                        <p class="text-xs text-zinc-400 mb-3">You can select and upload multiple menu pictures at once so customers can view all pages on the storefront slideshow.</p>
+                        <form onsubmit="handleUploadStoreMenus(event)" class="space-y-3">
                             <div class="flex flex-col sm:flex-row items-center gap-4">
-                                <input type="file" id="storeMenuImgFile" accept="image/*" required class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white text-xs file:mr-2 file:py-1 file:px-2 file:rounded-lg file:border-0 file:text-xs file:bg-amber-600 file:text-white">
-                                <button type="submit" id="storeMenuSubmitBtn" class="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-semibold text-xs whitespace-nowrap transition">Upload Menu Picture</button>
+                                <input type="file" id="storeMenusFiles" accept="image/*" multiple required class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white text-xs file:mr-2 file:py-1 file:px-2 file:rounded-lg file:border-0 file:text-xs file:bg-amber-600 file:text-white">
+                                <button type="submit" id="storeMenuSubmitBtn" class="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-semibold text-xs whitespace-nowrap transition">Upload Menu Pages</button>
                             </div>
                         </form>
-                        <div id="currentStoreMenuPreview" class="mt-4"></div>
+                        <div id="currentStoreMenusGrid" class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4"></div>
                     </div>
 
                     <!-- Add Menu Item -->
@@ -88,10 +85,10 @@
                         </form>
                     </div>
 
-                    <!-- Post Happy Customers Photos (Multiple) -->
+                    <!-- Post Happy Customers Photos -->
                     <div class="bg-zinc-900 border border-zinc-800 rounded-3xl p-5">
                         <h2 class="text-lg font-bold text-white mb-2"><i class="fa-solid fa-camera mr-2 text-amber-500"></i> Post Happy Customers</h2>
-                        <p class="text-xs text-zinc-400 mb-3">Select and upload multiple customer pictures at once.</p>
+                        <p class="text-xs text-zinc-400 mb-3">Upload multiple customer pictures at once.</p>
                         <form onsubmit="handleUploadGallery(event)" class="space-y-3">
                             <div>
                                 <input type="file" id="galleryImagesFile" accept="image/*" multiple required class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-1.5 text-white text-xs file:mr-2 file:py-0.5 file:px-2 file:rounded-md file:border-0 file:text-[11px] file:bg-zinc-700 file:text-white">
@@ -121,7 +118,7 @@
             <div id="viewMenu" class="hidden space-y-6">
                 <div class="bg-zinc-900 border border-zinc-800 rounded-3xl p-5">
                     <h2 class="text-xl font-bold text-white mb-2"><i class="fa-solid fa-utensils mr-2 text-amber-500"></i> Active Menu & Prices (Buyer Preview & Editor)</h2>
-                    <p class="text-xs text-zinc-400 mb-6">Review items as buyers see them. You can change prices, swap out product images, or delete items instantly.</p>
+                    <p class="text-xs text-zinc-400 mb-6">Review items as buyers see them. Change prices, swap product images, or delete items instantly.</p>
                     
                     <div id="ownerBuyerStyleMenuList" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"></div>
                 </div>
@@ -228,7 +225,7 @@
             document.getElementById('dashboardScreen').classList.remove('hidden');
             document.getElementById('navFooter').classList.remove('hidden');
             await fetchStoreSettings();
-            await fetchStoreMenuImage();
+            await fetchStoreMenusManager();
             await fetchOrders();
             await fetchBuyerStyleMenuList();
             await fetchGallery();
@@ -239,9 +236,7 @@
                 const res = await fetch('/api/settings');
                 currentStoreSettings = await res.json();
                 updateStoreButtonsUI();
-            } catch (err) {
-                console.error('Error fetching settings:', err);
-            }
+            } catch (err) { console.error(err); }
         }
 
         function updateStoreButtonsUI() {
@@ -272,10 +267,7 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ is_open: newState })
             });
-            if (res.ok) {
-                currentStoreSettings.is_open = newState;
-                updateStoreButtonsUI();
-            }
+            if (res.ok) { currentStoreSettings.is_open = newState; updateStoreButtonsUI(); }
         }
 
         async function toggleDeliveryStatus() {
@@ -285,10 +277,7 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ delivery_available: newState })
             });
-            if (res.ok) {
-                currentStoreSettings.delivery_available = newState;
-                updateStoreButtonsUI();
-            }
+            if (res.ok) { currentStoreSettings.delivery_available = newState; updateStoreButtonsUI(); }
         }
 
         function convertFileToBase64(file) {
@@ -300,52 +289,55 @@
             });
         }
 
-        async function fetchStoreMenuImage() {
+        // Store Menus Manager
+        async function fetchStoreMenusManager() {
             try {
-                const res = await fetch('/api/store-menu-image');
-                const data = await res.json();
-                const preview = document.getElementById('currentStoreMenuPreview');
-                if(data && data.image) {
-                    preview.innerHTML = `
-                        <p class="text-[11px] text-zinc-400 mb-1">Current Store Menu Preview:</p>
-                        <div class="h-32 w-full sm:w-48 rounded-xl overflow-hidden border border-zinc-700">
-                            <img src="${data.image}" class="w-full h-full object-cover">
-                        </div>
-                    `;
-                } else {
-                    preview.innerHTML = `<p class="text-[11px] text-zinc-500">No official store menu picture uploaded yet.</p>`;
-                }
-            } catch (err) {
-                console.error('Error fetching store menu image:', err);
-            }
+                const res = await fetch('/api/store-menus');
+                const menus = await res.json();
+                const grid = document.getElementById('currentStoreMenusGrid');
+                if(!menus.length) { grid.innerHTML = '<p class="text-zinc-500 text-xs col-span-full">No menu pages uploaded yet.</p>'; return; }
+
+                grid.innerHTML = menus.map(m => `
+                    <div class="relative group bg-zinc-800 rounded-xl overflow-hidden border border-zinc-700 aspect-square">
+                        <img src="${m.image}" class="w-full h-full object-cover">
+                        <button onclick="deleteStoreMenu(${m.id})" class="absolute top-1 right-1 bg-red-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] opacity-80 hover:opacity-100">×</button>
+                    </div>
+                `).join('');
+            } catch (err) { console.error(err); }
         }
 
-        async function handleUploadStoreMenu(e) {
+        async function handleUploadStoreMenus(e) {
             e.preventDefault();
             const btn = document.getElementById('storeMenuSubmitBtn');
             btn.disabled = true;
             btn.innerText = 'Uploading...';
 
-            const fileInput = document.getElementById('storeMenuImgFile');
-            if(!fileInput.files[0]) { btn.disabled = false; btn.innerText = 'Upload Menu Picture'; return; }
+            const fileInput = document.getElementById('storeMenusFiles');
+            if(!fileInput.files.length) { btn.disabled = false; btn.innerText = 'Upload Menu Pages'; return; }
 
-            const imageBase64 = await convertFileToBase64(fileInput.files[0]);
+            const base64Promises = Array.from(fileInput.files).map(file => convertFileToBase64(file));
+            const imagesArray = await Promise.all(base64Promises);
 
-            const res = await fetch('/api/store-menu-image', {
+            const res = await fetch('/api/store-menus', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ image: imageBase64 })
+                body: JSON.stringify({ images: imagesArray })
             });
 
             if(res.ok) {
-                alert('Official store menu picture updated successfully!');
+                alert('Store menu pictures uploaded successfully!');
                 e.target.reset();
-                fetchStoreMenuImage();
+                fetchStoreMenusManager();
             } else {
-                alert('Failed to update menu picture.');
+                alert('Failed to upload menu pictures.');
             }
             btn.disabled = false;
-            btn.innerText = 'Upload Menu Picture';
+            btn.innerText = 'Upload Menu Pages';
+        }
+
+        async function deleteStoreMenu(id) {
+            const res = await fetch(`/api/store-menus/${id}`, { method: 'DELETE' });
+            if(res.ok) fetchStoreMenusManager();
         }
 
         async function fetchOrders() {
@@ -387,7 +379,6 @@
             fetchOrders();
         }
 
-        // Active Menu Display with Price & Image Update Editor
         async function fetchBuyerStyleMenuList() {
             const res = await fetch('/api/products');
             const products = await res.json();
@@ -398,14 +389,13 @@
                 <div class="bg-zinc-800 border border-zinc-700 rounded-3xl overflow-hidden shadow-xl flex flex-col justify-between">
                     <div>
                         <div class="h-44 w-full overflow-hidden relative">
-                            <img src="${p.image}" id="img-preview-${p.id}" class="w-full h-full object-cover">
+                            <img src="${p.image}" class="w-full h-full object-cover">
                             <span class="absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-semibold bg-black/60 backdrop-blur-md text-amber-400 border border-zinc-700">${p.category}</span>
                         </div>
                         <div class="p-4 space-y-2">
                             <h3 class="text-base font-bold text-white">${p.name}</h3>
                             <p class="text-xs text-zinc-400 leading-relaxed">${p.description}</p>
                             
-                            <!-- Edit Price and Picture Form Fields -->
                             <div class="pt-2 space-y-2 border-t border-zinc-700/60">
                                 <div class="flex items-center justify-between">
                                     <span class="text-xs text-zinc-300 font-medium">Update Price (R):</span>
@@ -419,7 +409,7 @@
                         </div>
                     </div>
                     <div class="p-4 pt-0 flex items-center justify-between border-t border-zinc-700/50 mt-2">
-                        <button onclick="updateProductDetails(${p.id})" class="px-3 py-1.5 bg-amber-600 hover:bg-amber-500 text-white text-xs font-semibold rounded-xl transition">
+                        <button id="update-btn-${p.id}" onclick="updateProductDetails(${p.id})" class="px-3 py-1.5 bg-amber-600 hover:bg-amber-500 text-white text-xs font-semibold rounded-xl transition">
                             <i class="fa-solid fa-save mr-1"></i> Update Item
                         </button>
                         <button onclick="deleteMenuItem(${p.id})" class="px-3 py-1.5 bg-red-600/20 hover:bg-red-600 text-red-400 hover:text-white text-xs font-semibold rounded-xl transition">
@@ -431,54 +421,54 @@
         }
 
         async function updateProductDetails(id) {
-            const newPrice = parseFloat(document.getElementById(`edit-price-${id}`).value);
-            const fileInput = document.getElementById(`edit-file-${id}`);
-            
-            let updatedImage = null;
-            if (fileInput.files[0]) {
-                updatedImage = await convertFileToBase64(fileInput.files[0]);
-            }
+            const btn = document.getElementById(`update-btn-${id}`);
+            if (btn) { btn.disabled = true; btn.innerText = 'Updating...'; btn.classList.add('opacity-50', 'cursor-not-allowed'); }
 
-            const body = { price: newPrice };
-            if (updatedImage) {
-                body.image = updatedImage;
-            }
+            try {
+                const newPrice = parseFloat(document.getElementById(`edit-price-${id}`).value);
+                const fileInput = document.getElementById(`edit-file-${id}`);
+                
+                let updatedImage = null;
+                if (fileInput.files[0]) {
+                    updatedImage = await convertFileToBase64(fileInput.files[0]);
+                }
 
-            const res = await fetch(`/api/products/${id}`, {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(body)
-            });
+                const body = { price: newPrice };
+                if (updatedImage) body.image = updatedImage;
 
-            if (res.ok) {
-                alert('Product updated successfully!');
-                fetchBuyerStyleMenuList();
-            } else {
-                alert('Failed to update product.');
+                const res = await fetch(`/api/products/${id}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+
+                if (res.ok) {
+                    alert('Product updated successfully!');
+                    fetchBuyerStyleMenuList();
+                } else {
+                    alert('Failed to update product.');
+                }
+            } catch (err) {
+                alert('Network error updating product.');
+            } finally {
+                if (btn) { btn.disabled = false; btn.innerText = 'Update Item'; btn.classList.remove('opacity-50', 'cursor-not-allowed'); }
             }
         }
 
         async function deleteMenuItem(id) {
             if(!confirm('Are you sure you want to delete this menu item?')) return;
             const res = await fetch(`/api/products/${id}`, { method: 'DELETE' });
-            if(res.ok) {
-                fetchBuyerStyleMenuList();
-            } else {
-                alert('Failed to delete item.');
-            }
+            if(res.ok) fetchBuyerStyleMenuList();
         }
 
         async function handleAddNewMenuItem(e) {
             e.preventDefault();
             const btn = document.getElementById('menuItemSubmitBtn');
-            btn.disabled = true;
-            btn.innerText = 'Publishing...';
+            btn.disabled = true; btn.innerText = 'Publishing...';
 
             const fileInput = document.getElementById('newItemImageFile');
             let imageBase64 = '';
-            if (fileInput.files[0]) {
-                imageBase64 = await convertFileToBase64(fileInput.files[0]);
-            }
+            if (fileInput.files[0]) imageBase64 = await convertFileToBase64(fileInput.files[0]);
 
             const body = {
                 name: document.getElementById('newItemName').value,
@@ -489,13 +479,8 @@
             };
 
             const res = await fetch('/api/products', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body) });
-            if(res.ok) {
-                alert('Menu item published successfully!');
-                e.target.reset();
-                fetchBuyerStyleMenuList();
-            }
-            btn.disabled = false;
-            btn.innerText = 'Publish Item';
+            if(res.ok) { alert('Menu item published successfully!'); e.target.reset(); fetchBuyerStyleMenuList(); }
+            btn.disabled = false; btn.innerText = 'Publish Item';
         }
 
         async function fetchGallery() {
@@ -515,8 +500,7 @@
         async function handleUploadGallery(e) {
             e.preventDefault();
             const btn = document.getElementById('gallerySubmitBtn');
-            btn.disabled = true;
-            btn.innerText = 'Uploading...';
+            btn.disabled = true; btn.innerText = 'Uploading...';
 
             const fileInput = document.getElementById('galleryImagesFile');
             const caption = document.getElementById('galleryCaption').value;
@@ -532,15 +516,9 @@
                 body: JSON.stringify({ images: imagesArray, caption })
             });
 
-            if (res.ok) {
-                alert('Happy customer photos uploaded successfully!');
-                e.target.reset();
-                fetchGallery();
-            } else {
-                alert('Failed to upload photos.');
-            }
-            btn.disabled = false;
-            btn.innerText = 'Upload Photos';
+            if (res.ok) { alert('Happy customer photos uploaded successfully!'); e.target.reset(); fetchGallery(); }
+            else { alert('Failed to upload photos.'); }
+            btn.disabled = false; btn.innerText = 'Upload Photos';
         }
 
         async function deleteGalleryPhoto(id) {
@@ -551,8 +529,7 @@
         async function handleRegisterBoss(e) {
             e.preventDefault();
             const btn = document.getElementById('bossSubmitBtn');
-            btn.disabled = true;
-            btn.innerText = 'Registering...';
+            btn.disabled = true; btn.innerText = 'Registering...';
 
             const email = document.getElementById('newBossEmail').value.trim();
             const password = document.getElementById('newBossPassword').value;
@@ -563,14 +540,9 @@
                 body: JSON.stringify({ email, password })
             });
             const data = await res.json();
-            if (res.ok && data.success) {
-                alert('New boss account registered securely!');
-                e.target.reset();
-            } else {
-                alert(data.error || 'Failed to register');
-            }
-            btn.disabled = false;
-            btn.innerText = 'Register Boss Account';
+            if (res.ok && data.success) { alert('New boss registered securely!'); e.target.reset(); }
+            else { alert(data.error || 'Failed to register'); }
+            btn.disabled = false; btn.innerText = 'Register Boss Account';
         }
     </script>
 </body>
