@@ -32,7 +32,7 @@ async function uploadToSupabaseStorage(base64Data, folder = 'uploads') {
         const fileName = `${folder}/${Date.now()}-${Math.random().toString(36).substring(2, 7)}.${fileExt}`;
 
         const { data, error } = await supabase.storage
-            .from('kotas-media')
+            .from('store-uploads')
             .upload(fileName, buffer, {
                 contentType: mimeType,
                 upsert: true
@@ -41,7 +41,7 @@ async function uploadToSupabaseStorage(base64Data, folder = 'uploads') {
         if (error) throw error;
 
         const { data: publicUrlData } = supabase.storage
-            .from('kotas-media')
+            .from('store-uploads')
             .getPublicUrl(fileName);
 
         return publicUrlData.publicUrl;
