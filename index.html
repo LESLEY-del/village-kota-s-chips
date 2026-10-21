@@ -2,8 +2,10 @@
 <html lang="en" class="h-full">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Village Kotas Chips | Premium Fast Food & Beverages</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -17,13 +19,19 @@
             }
         }
     </script>
-    <style>body { font-family: 'Inter', sans-serif; background-color: #121212; color: #f3f4f6; }</style>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #121212; color: #f3f4f6; }
+        .zoomable { cursor: zoom-in; }
+        #imageViewer { touch-action: pan-y; }
+        #imageViewerImage { max-width: 94vw; max-height: 82vh; object-fit: contain; }
+        @media (max-width: 640px) { #imageViewerImage { max-width: 96vw; max-height: 76vh; } }
+    </style>
 </head>
 <body class="h-full flex flex-col justify-between selection:bg-amber-500 selection:text-white">
 
     <div class="min-h-full flex flex-col justify-between">
         <!-- HEADER -->
-        <header class="sticky top-0 z-50 bg-zinc-900/95 backdrop-blur border-b border-zinc-800">
+        <header class="sticky top-0 z-40 bg-zinc-900/95 backdrop-blur border-b border-zinc-800">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
                 <div class="flex items-center space-x-3 cursor-pointer" onclick="window.scrollTo({top:0, behavior:'smooth'})">
                     <div class="w-10 h-10 rounded-xl bg-amber-600 flex items-center justify-center shadow-lg shadow-amber-600/30">
@@ -37,7 +45,7 @@
 
                 <div class="flex items-center space-x-3">
                     <span id="storeStatusBadge" class="hidden sm:inline-flex px-3 py-1 rounded-full text-xs font-bold">Checking status...</span>
-                    <button onclick="toggleCartDrawer()" class="relative p-2.5 rounded-xl bg-zinc-800 text-zinc-300 hover:text-white transition border border-zinc-700/50">
+                    <button onclick="toggleCartDrawer()" aria-label="Open basket" class="relative p-2.5 rounded-xl bg-zinc-800 text-zinc-300 hover:text-white transition border border-zinc-700/50">
                         <i class="fa-solid fa-cart-shopping text-lg"></i>
                         <span id="cartBadge" class="absolute -top-1.5 -right-1.5 bg-amber-600 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center shadow">0</span>
                     </button>
@@ -52,9 +60,8 @@
         <!-- HERO SECTION WITH AUTO-SLIDESHOW BACKGROUND -->
         <main class="flex-grow">
             <div id="heroSection" class="relative bg-zinc-900 py-20 lg:py-28 border-b border-zinc-800 bg-cover bg-center transition-all duration-700">
-                <!-- Dark overlay so text remains readable -->
                 <div class="absolute inset-0 bg-gradient-to-r from-zinc-950 via-zinc-950/90 to-zinc-950/70"></div>
-                
+
                 <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center lg:text-left space-y-6 flex justify-between items-center">
                     <div class="space-y-6 max-w-xl">
                         <span class="inline-flex items-center gap-1.5 py-1.5 px-3 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-500 border border-amber-500/20">
@@ -66,8 +73,10 @@
                         <p class="text-lg text-zinc-300">
                             Satisfy your cravings with our loaded kasi kotas, crispy chips, creamy gourmet milkshakes, and refreshing drinks delivered right to your door or prepared fresh in-venue.
                         </p>
+                        <button id="viewMenuBtn" onclick="openMenuPages()" class="hidden items-center gap-2 px-5 py-3 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white text-sm font-semibold transition">
+                            <i class="fa-solid fa-book-open text-amber-400"></i> View Our Full Menu
+                        </button>
                     </div>
-                    <!-- Slide Indicators if more than 1 image -->
                     <div id="heroSlideIndicators" class="hidden lg:flex flex-col space-y-2"></div>
                 </div>
             </div>
@@ -76,16 +85,12 @@
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
                     <h2 class="text-2xl font-bold text-white tracking-tight">Our Delicious Menu</h2>
-                    <div class="flex flex-wrap gap-2 bg-zinc-900 p-1.5 rounded-2xl border border-zinc-800" id="categoryFilters">
-                        <button onclick="filterCategory('All')" class="category-btn px-4 py-2 rounded-xl text-xs font-semibold transition bg-amber-600 text-white shadow">All Items</button>
-                        <button onclick="filterCategory('Kotas')" class="category-btn px-4 py-2 rounded-xl text-xs font-medium transition text-zinc-400 hover:text-white">Kotas</button>
-                        <button onclick="filterCategory('Milkshakes')" class="category-btn px-4 py-2 rounded-xl text-xs font-medium transition text-zinc-400 hover:text-white">Milkshakes</button>
-                        <button onclick="filterCategory('Coffee')" class="category-btn px-4 py-2 rounded-xl text-xs font-medium transition text-zinc-400 hover:text-white">Coffee</button>
-                        <button onclick="filterCategory('Mocktails')" class="category-btn px-4 py-2 rounded-xl text-xs font-medium transition text-zinc-400 hover:text-white">Mocktails</button>
-                    </div>
+                    <div class="flex flex-wrap gap-2 bg-zinc-900 p-1.5 rounded-2xl border border-zinc-800" id="categoryFilters"></div>
                 </div>
 
-                <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"></div>
+                <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <p class="text-zinc-500 text-sm col-span-full">Loading menu...</p>
+                </div>
             </div>
 
             <!-- HAPPY CUSTOMERS GALLERY SECTION -->
@@ -102,7 +107,7 @@
                 <div class="w-screen max-w-md bg-zinc-900 border-l border-zinc-800 flex flex-col shadow-2xl">
                     <div class="p-6 border-b border-zinc-800 flex items-center justify-between">
                         <h2 class="text-xl font-bold text-white"><i class="fa-solid fa-basket-shopping text-amber-500 mr-2"></i> Your Basket</h2>
-                        <button onclick="toggleCartDrawer()" class="text-zinc-400 hover:text-white p-2"><i class="fa-solid fa-xmark text-xl"></i></button>
+                        <button onclick="toggleCartDrawer()" aria-label="Close basket" class="text-zinc-400 hover:text-white p-2"><i class="fa-solid fa-xmark text-xl"></i></button>
                     </div>
                     <div id="cartItemsList" class="flex-grow overflow-y-auto p-6 space-y-4 divide-y divide-zinc-800/60"></div>
                     <div class="p-6 border-t border-zinc-800 bg-zinc-900/90 space-y-4">
@@ -119,10 +124,10 @@
         <!-- CHECKOUT MODAL -->
         <div id="checkoutModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
             <div class="bg-zinc-900 border border-zinc-800 rounded-3xl max-w-md w-full p-6 relative max-h-[90vh] overflow-y-auto">
-                <button onclick="closeCheckoutModal()" class="absolute top-4 right-4 text-zinc-400 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
+                <button onclick="closeCheckoutModal()" aria-label="Close" class="absolute top-4 right-4 text-zinc-400 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
                 <h3 class="text-xl font-bold text-white mb-4">Complete Your Order</h3>
-                
-                <form onsubmit="handleCheckoutSubmit(event)" class="space-y-4">
+
+                <form id="checkoutForm" onsubmit="handleCheckoutSubmit(event)" class="space-y-4">
                     <div>
                         <label class="block text-xs text-zinc-400 mb-1">Your Name</label>
                         <input type="text" id="orderCustName" required placeholder="John Doe" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-2.5 text-white text-sm">
@@ -130,6 +135,10 @@
                     <div>
                         <label class="block text-xs text-zinc-400 mb-1">Phone Number</label>
                         <input type="tel" id="orderCustPhone" required placeholder="072 123 4567" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-2.5 text-white text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-zinc-400 mb-1">Email Address <span id="emailHint" class="text-zinc-500">(we'll send your booking updates here)</span></label>
+                        <input type="email" id="orderCustEmail" required placeholder="you@example.com" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-2.5 text-white text-sm">
                     </div>
 
                     <div>
@@ -142,7 +151,7 @@
 
                     <div id="addressFieldContainer">
                         <label class="block text-xs text-zinc-400 mb-1">Delivery Address</label>
-                        <textarea id="orderCustAddress" rows="2" placeholder="Street address or location" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-2.5 text-white text-sm"></textarea>
+                        <textarea id="orderCustAddress" rows="2" required placeholder="Street address or location" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-2.5 text-white text-sm"></textarea>
                     </div>
 
                     <div>
@@ -153,7 +162,7 @@
                         </div>
                     </div>
 
-                    <button type="submit" id="finalSubmitBtn" class="w-full py-3.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-semibold transition shadow-lg">Confirm Order</button>
+                    <button type="submit" id="finalSubmitBtn" class="w-full py-3.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-semibold transition shadow-lg disabled:opacity-60">Confirm Order</button>
                 </form>
             </div>
         </div>
@@ -169,6 +178,15 @@
             </div>
         </footer>
 
+        <!-- FULL-SCREEN IMAGE VIEWER -->
+        <div id="imageViewer" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/95 p-3 sm:p-6" role="dialog" aria-modal="true" aria-label="Image viewer">
+            <button type="button" id="imageViewerClose" class="absolute top-3 right-3 sm:top-5 sm:right-5 z-10 rounded-full bg-zinc-800/90 hover:bg-zinc-700 text-white w-11 h-11" aria-label="Close image viewer"><i class="fa-solid fa-xmark text-xl"></i></button>
+            <button type="button" id="imageViewerPrev" class="absolute left-2 sm:left-5 top-1/2 -translate-y-1/2 z-10 rounded-full bg-zinc-800/90 hover:bg-zinc-700 text-white w-11 h-11" aria-label="Previous image"><i class="fa-solid fa-chevron-left"></i></button>
+            <img id="imageViewerImage" src="" alt="Expanded image" class="rounded-lg shadow-2xl" />
+            <button type="button" id="imageViewerNext" class="absolute right-2 sm:right-5 top-1/2 -translate-y-1/2 z-10 rounded-full bg-zinc-800/90 hover:bg-zinc-700 text-white w-11 h-11" aria-label="Next image"><i class="fa-solid fa-chevron-right"></i></button>
+            <p id="imageViewerCaption" class="absolute bottom-3 sm:bottom-5 left-14 right-14 text-center text-xs sm:text-sm text-zinc-300"></p>
+        </div>
+
         <!-- TOAST -->
         <div id="toastNotification" class="fixed bottom-6 right-6 z-50 transform translate-y-24 opacity-0 transition-all duration-300 bg-zinc-900 border border-amber-500/40 shadow-2xl rounded-2xl p-4 text-white max-w-sm">
             <h4 id="toastTitle" class="text-sm font-bold">Notification</h4>
@@ -177,42 +195,50 @@
     </div>
 
     <script>
-        let state = { currentCategory: 'All', cart: [], products: [], storeMenus: [], currentSlide: 0, storeSettings: { is_open: true, delivery_available: true }, bookingMethod: 'website' };
-        const BUSINESS_WHATSAPP_NUMBER = '27720000000';
+        const state = { currentCategory: 'All', cart: [], products: [], storeMenus: [], currentSlide: 0, storeSettings: { is_open: true, delivery_available: true }, bookingMethod: 'website' };
+        const BUSINESS_WHATSAPP_NUMBER = '27720000000'; // <-- put the real WhatsApp number here (country code, no + or spaces)
 
-        async function initApp() {
-            try {
-                const settingsRes = await fetch('/api/settings');
-                state.storeSettings = await settingsRes.json();
-                updateStoreStatusBanner();
-            } catch (err) { console.error(err); }
+        const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+        const money = (n) => 'R ' + Number(n).toFixed(2);
 
-            try {
-                const res = await fetch('/api/products');
-                state.products = await res.json();
-            } catch (err) { console.error(err); }
+        // Everything loads at the same time and each part shows as soon as it arrives
+        function initApp() {
+            fetch('/api/settings').then(r => r.json())
+                .then(s => { state.storeSettings = s; updateStoreStatusBanner(); })
+                .catch(console.error);
 
-            try {
-                const menuRes = await fetch('/api/store-menus');
-                state.storeMenus = await menuRes.json();
-                if (state.storeMenus.length > 0) {
-                    startHeroSlideshow();
-                }
-            } catch (err) { console.error(err); }
+            fetch('/api/products').then(r => r.json())
+                .then(p => { state.products = Array.isArray(p) ? p : []; renderCategoryFilters(); renderProducts(); })
+                .catch(err => {
+                    console.error(err);
+                    document.getElementById('productGrid').innerHTML = '<p class="text-zinc-500 text-sm col-span-full">Could not load the menu. Please refresh.</p>';
+                });
 
-            state.currentCategory = 'All';
-            renderProducts();
+            fetch('/api/store-menus').then(r => r.json())
+                .then(m => {
+                    state.storeMenus = Array.isArray(m) ? m : [];
+                    if (state.storeMenus.length) {
+                        startHeroSlideshow();
+                        const b = document.getElementById('viewMenuBtn');
+                        b.classList.remove('hidden');
+                        b.classList.add('inline-flex');
+                    }
+                })
+                .catch(console.error);
+
             fetchStoreGallery();
+        }
+
+        function openMenuPages() {
+            if (state.storeMenus.length) openLightbox(state.storeMenus.map(m => m.image), 0);
         }
 
         function startHeroSlideshow() {
             const hero = document.getElementById('heroSection');
             const indicators = document.getElementById('heroSlideIndicators');
-            
-            function updateSlide() {
-                const currentMenu = state.storeMenus[state.currentSlide];
-                hero.style.backgroundImage = `url('${currentMenu.image}')`;
 
+            function updateSlide() {
+                hero.style.backgroundImage = `url('${state.storeMenus[state.currentSlide].image}')`;
                 if (state.storeMenus.length > 1) {
                     indicators.innerHTML = state.storeMenus.map((m, idx) => `
                         <div class="w-3 h-3 rounded-full transition-all ${idx === state.currentSlide ? 'bg-amber-500 scale-125' : 'bg-white/40'}"></div>
@@ -221,12 +247,11 @@
             }
 
             updateSlide();
-
             if (state.storeMenus.length > 1) {
                 setInterval(() => {
                     state.currentSlide = (state.currentSlide + 1) % state.storeMenus.length;
                     updateSlide();
-                }, 5000); // Rotates every 5 seconds
+                }, 5000);
             }
         }
 
@@ -241,27 +266,39 @@
             }
         }
 
+        // Category buttons are built from the real menu, so any new category the boss types shows up automatically
+        function renderCategoryFilters() {
+            const cats = ['All', ...new Set(state.products.map(p => p.category).filter(Boolean))];
+            document.getElementById('categoryFilters').innerHTML = cats.map(c => {
+                const active = c === state.currentCategory;
+                const cls = active ? 'bg-amber-600 text-white shadow font-semibold' : 'text-zinc-400 hover:text-white font-medium';
+                return `<button data-cat="${esc(c)}" onclick="filterCategory(this.dataset.cat)" class="px-4 py-2 rounded-xl text-xs transition ${cls}">${c === 'All' ? 'All Items' : esc(c)}</button>`;
+            }).join('');
+        }
+
         function filterCategory(cat) {
             state.currentCategory = cat;
+            renderCategoryFilters();
             renderProducts();
         }
 
         function renderProducts() {
             const grid = document.getElementById('productGrid');
             const filtered = state.products.filter(p => state.currentCategory === 'All' || p.category === state.currentCategory);
-            if(!filtered.length) { grid.innerHTML = '<p class="text-zinc-500 text-sm col-span-full">No items found.</p>'; return; }
+            if (!filtered.length) { grid.innerHTML = '<p class="text-zinc-500 text-sm col-span-full">No items found.</p>'; return; }
 
             grid.innerHTML = filtered.map(p => `
                 <div class="bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden shadow-xl flex flex-col justify-between">
-                    <img src="${p.image}" class="h-48 w-full object-cover">
+                    <img src="${esc(p.image)}" alt="${esc(p.name)}" loading="lazy" decoding="async" data-group="products"
+                         class="zoomable h-48 w-full object-cover cursor-zoom-in bg-zinc-800">
                     <div class="p-5 flex flex-col flex-grow justify-between space-y-4">
                         <div>
-                            <h3 class="text-lg font-bold text-white">${p.name}</h3>
-                            <p class="text-xs text-zinc-400 mt-1">${p.description}</p>
+                            <h3 class="text-lg font-bold text-white">${esc(p.name)}</h3>
+                            <p class="text-xs text-zinc-400 mt-1">${esc(p.description)}</p>
                         </div>
                         <div class="flex items-center justify-between pt-2 border-t border-zinc-800">
-                            <span class="text-lg font-extrabold text-amber-500">R ${parseFloat(p.price).toFixed(2)}</span>
-                            <button onclick="addToCart('${p.id}')" class="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-white text-xs font-semibold">Add</button>
+                            <span class="text-lg font-extrabold text-amber-500">${money(p.price)}</span>
+                            <button onclick="addToCart('${esc(p.id)}')" class="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-white text-xs font-semibold">Add</button>
                         </div>
                     </div>
                 </div>
@@ -269,89 +306,103 @@
         }
 
         async function fetchStoreGallery() {
+            const grid = document.getElementById('storeGalleryGrid');
             try {
                 const res = await fetch('/api/gallery');
                 const photos = await res.json();
-                const grid = document.getElementById('storeGalleryGrid');
-                if(!photos.length) { grid.innerHTML = '<p class="text-zinc-500 text-xs col-span-full">No customer photos yet.</p>'; return; }
+                if (!photos.length) { grid.innerHTML = '<p class="text-zinc-500 text-xs col-span-full">No customer photos yet.</p>'; return; }
 
                 grid.innerHTML = photos.map(p => `
                     <div class="bg-zinc-800 rounded-2xl overflow-hidden border border-zinc-700 aspect-square">
-                        <img src="${p.image}" class="w-full h-full object-cover">
+                        <img src="${esc(p.image)}" alt="${esc(p.caption || 'Happy customer')}" loading="lazy" decoding="async" data-group="gallery"
+                             class="zoomable w-full h-full object-cover cursor-zoom-in">
                     </div>
                 `).join('');
             } catch (err) { console.error(err); }
         }
 
+        // ---------- CART ----------
+        function cartTotal() { return state.cart.reduce((a, b) => a + parseFloat(b.price) * b.quantity, 0); }
+        function updateBadge() { document.getElementById('cartBadge').textContent = state.cart.reduce((a, b) => a + b.quantity, 0); }
+
         function toggleCartDrawer() { document.getElementById('cartDrawer').classList.toggle('hidden'); renderCart(); }
 
         function addToCart(id) {
-            if(!state.storeSettings.is_open) {
+            if (!state.storeSettings.is_open) {
                 alert('Sorry, the store is currently CLOSED. You cannot add items to cart right now.');
                 return;
             }
-            const p = state.products.find(x => x.id == id);
-            const item = state.cart.find(x => x.id == id);
+            const p = state.products.find(x => String(x.id) === String(id));
+            if (!p) return;
+            const item = state.cart.find(x => String(x.id) === String(id));
             if (item) item.quantity++; else state.cart.push({ ...p, quantity: 1 });
-            document.getElementById('cartBadge').textContent = state.cart.reduce((a,b)=>a+b.quantity,0);
+            updateBadge();
             showToast(`Added ${p.name}`);
         }
 
         function renderCart() {
             const list = document.getElementById('cartItemsList');
-            let sub = state.cart.reduce((a,b)=>a+(b.price*b.quantity),0);
-            if(!state.cart.length) { list.innerHTML = '<p class="text-zinc-500 text-sm">Your basket is empty.</p>'; }
+            if (!state.cart.length) { list.innerHTML = '<p class="text-zinc-500 text-sm">Your basket is empty.</p>'; }
             else {
-                list.innerHTML = state.cart.map(i=>`<div class="flex justify-between py-2 text-sm text-white"><span>${i.quantity}x ${i.name}</span><span class="text-amber-400 font-bold">R ${(i.price*i.quantity).toFixed(2)}</span></div>`).join('');
+                list.innerHTML = state.cart.map(i => `<div class="flex justify-between py-2 text-sm text-white"><span>${i.quantity}x ${esc(i.name)}</span><span class="text-amber-400 font-bold">${money(parseFloat(i.price) * i.quantity)}</span></div>`).join('');
             }
-            document.getElementById('cartTotal').textContent = `R ${sub.toFixed(2)}`;
+            document.getElementById('cartTotal').textContent = money(cartTotal());
         }
 
-        function openCheckoutModal() { 
-            if(!state.storeSettings.is_open) { alert('Store is currently closed.'); return; }
-            if(!state.cart.length) return showToast('Cart is empty', 'Warning'); 
-            toggleCartDrawer(); 
-            document.getElementById('checkoutModal').classList.remove('hidden'); 
-            document.getElementById('checkoutModal').classList.add('flex'); 
+        function openCheckoutModal() {
+            if (!state.storeSettings.is_open) { alert('Store is currently closed.'); return; }
+            if (!state.cart.length) return showToast('Your basket is empty', 'Warning');
+            toggleCartDrawer();
+            document.getElementById('checkoutModal').classList.remove('hidden');
+            document.getElementById('checkoutModal').classList.add('flex');
         }
 
-        function closeCheckoutModal() { 
-            document.getElementById('checkoutModal').classList.add('hidden'); 
-            document.getElementById('checkoutModal').classList.remove('flex'); 
+        function closeCheckoutModal() {
+            document.getElementById('checkoutModal').classList.add('hidden');
+            document.getElementById('checkoutModal').classList.remove('flex');
         }
 
         function toggleAddressField() {
-            const type = document.getElementById('fulfillmentType').value;
-            const container = document.getElementById('addressFieldContainer');
-            if (type === 'In-Venue') {
-                container.style.display = 'none';
-                document.getElementById('orderCustAddress').required = false;
-            } else {
-                container.style.display = 'block';
-                document.getElementById('orderCustAddress').required = true;
-            }
+            const isVenue = document.getElementById('fulfillmentType').value === 'In-Venue';
+            document.getElementById('addressFieldContainer').style.display = isVenue ? 'none' : 'block';
+            document.getElementById('orderCustAddress').required = !isVenue;
         }
 
         function setBookingMethod(method) {
             state.bookingMethod = method;
             const webBtn = document.getElementById('methodWebsiteBtn');
             const waBtn = document.getElementById('methodWhatsappBtn');
+            const email = document.getElementById('orderCustEmail');
             if (method === 'website') {
                 webBtn.className = "py-2.5 rounded-xl bg-amber-600 text-white text-xs font-bold border border-amber-500 transition";
                 waBtn.className = "py-2.5 rounded-xl bg-zinc-800 text-zinc-300 text-xs font-bold border border-zinc-700 transition";
+                email.required = true;
+                document.getElementById('emailHint').textContent = "(we'll send your booking updates here)";
             } else {
                 waBtn.className = "py-2.5 rounded-xl bg-emerald-600 text-white text-xs font-bold border border-emerald-500 transition";
                 webBtn.className = "py-2.5 rounded-xl bg-zinc-800 text-zinc-300 text-xs font-bold border border-zinc-700 transition";
+                email.required = false;
+                document.getElementById('emailHint').textContent = "(optional for WhatsApp bookings)";
             }
+        }
+
+        function finishOrder() {
+            state.cart = [];
+            updateBadge();
+            closeCheckoutModal();
+            document.getElementById('checkoutForm').reset();
+            toggleAddressField();
         }
 
         async function handleCheckoutSubmit(e) {
             e.preventDefault();
-            const name = document.getElementById('orderCustName').value;
-            const phone = document.getElementById('orderCustPhone').value;
+            if (!state.cart.length) return;
+
+            const name = document.getElementById('orderCustName').value.trim();
+            const phone = document.getElementById('orderCustPhone').value.trim();
+            const email = document.getElementById('orderCustEmail').value.trim();
             const fulfillment = document.getElementById('fulfillmentType').value;
-            const address = fulfillment === 'In-Venue' ? 'In-Venue (Eat-In/Collection)' : document.getElementById('orderCustAddress').value;
-            const sub = state.cart.reduce((a,b)=>a+(b.price*b.quantity),0);
+            const address = fulfillment === 'In-Venue' ? 'In-Venue (Eat-In/Collection)' : document.getElementById('orderCustAddress').value.trim();
 
             if (fulfillment === 'Delivery' && !state.storeSettings.delivery_available) {
                 alert('Delivery is currently unavailable. Please choose In-Venue or check back later.');
@@ -359,13 +410,10 @@
             }
 
             if (state.bookingMethod === 'whatsapp') {
-                let itemsText = state.cart.map(i => `• ${i.quantity}x ${i.name} (R${(i.price*i.quantity).toFixed(2)})`).join('%0A');
-                let message = `*NEW ORDER BOOKING*%0A%0A*Name:* ${name}%0A*Phone:* ${phone}%0A*Fulfillment:* ${fulfillment}%0A*Address:* ${address}%0A%0A*Items:*%0A${itemsText}%0A%0A*Total Amount:* R${sub.toFixed(2)}`;
-                
-                window.open(`https://wa.me/${BUSINESS_WHATSAPP_NUMBER}?text=${message}`, '_blank');
-                closeCheckoutModal();
-                state.cart = [];
-                document.getElementById('cartBadge').textContent = 0;
+                const lines = state.cart.map(i => `• ${i.quantity}x ${i.name} (R${(parseFloat(i.price) * i.quantity).toFixed(2)})`).join('\n');
+                const text = `*NEW ORDER BOOKING*\n\n*Name:* ${name}\n*Phone:* ${phone}\n*Fulfillment:* ${fulfillment}\n*Address:* ${address}\n\n*Items:*\n${lines}\n\n*Total Amount:* R${cartTotal().toFixed(2)}`;
+                window.open(`https://wa.me/${BUSINESS_WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`, '_blank');
+                finishOrder();
                 return;
             }
 
@@ -373,31 +421,117 @@
             btn.disabled = true;
             btn.innerText = 'Placing Order...';
 
-            const payload = { customerName: name, customerPhone: phone, address: `${fulfillment}: ${address}`, total: sub, items: state.cart };
-            const res = await fetch('/api/orders', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload) });
-            const data = await res.json();
-            
-            if(res.ok) {
-                showToast(`Order ${data.orderId} placed successfully!`, 'Success');
-                state.cart = [];
-                document.getElementById('cartBadge').textContent = 0;
-                closeCheckoutModal();
-            } else {
-                alert('Failed to place order.');
+            try {
+                const res = await fetch('/api/orders', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        customerName: name,
+                        customerPhone: phone,
+                        customerEmail: email,
+                        fulfillment,
+                        address,
+                        items: state.cart.map(i => ({ id: i.id, quantity: i.quantity }))
+                    })
+                });
+                const data = await res.json().catch(() => ({}));
+
+                if (res.ok) {
+                    showToast(`Order ${data.orderId} is confirmed! A confirmation email is on its way to ${email}.`, 'Booking confirmed ✅', 7000);
+                    finishOrder();
+                } else {
+                    alert(data.error || 'Failed to place order. Please try again.');
+                }
+            } catch (err) {
+                alert('Network error. Please check your connection and try again.');
+            } finally {
+                btn.disabled = false;
+                btn.innerText = 'Confirm Order';
             }
-            btn.disabled = false;
-            btn.innerText = 'Confirm Order';
         }
 
-        function showToast(msg, title='Cart') {
+        // ---------- FULL-SCREEN IMAGE VIEWER ----------
+        let viewerImages = [];
+        let viewerIndex = 0;
+        let viewerReturnFocus = null;
+
+        function openLightbox(images, index = 0, captions = []) {
+            const validImages = (Array.isArray(images) ? images : [images]).filter(Boolean);
+            if (!validImages.length) return;
+            viewerImages = validImages.map((src, i) => ({ src, caption: captions[i] || '' }));
+            viewerIndex = Math.max(0, Math.min(Number(index) || 0, viewerImages.length - 1));
+            viewerReturnFocus = document.activeElement;
+            const viewer = document.getElementById('imageViewer');
+            viewer.classList.remove('hidden');
+            viewer.classList.add('flex');
+            document.body.style.overflow = 'hidden';
+            renderViewerImage();
+            document.getElementById('imageViewerClose').focus();
+        }
+
+        function renderViewerImage() {
+            if (!viewerImages.length) return;
+            const item = viewerImages[viewerIndex];
+            const image = document.getElementById('imageViewerImage');
+            image.src = item.src;
+            image.alt = item.caption || 'Expanded menu or product image';
+            document.getElementById('imageViewerCaption').textContent = item.caption || `${viewerIndex + 1} of ${viewerImages.length}`;
+            const multiple = viewerImages.length > 1;
+            document.getElementById('imageViewerPrev').classList.toggle('hidden', !multiple);
+            document.getElementById('imageViewerNext').classList.toggle('hidden', !multiple);
+        }
+
+        function closeLightbox() {
+            const viewer = document.getElementById('imageViewer');
+            viewer.classList.add('hidden');
+            viewer.classList.remove('flex');
+            document.body.style.overflow = '';
+            document.getElementById('imageViewerImage').src = '';
+            viewerImages = [];
+            if (viewerReturnFocus && typeof viewerReturnFocus.focus === 'function') viewerReturnFocus.focus();
+        }
+
+        function stepLightbox(direction) {
+            if (viewerImages.length < 2) return;
+            viewerIndex = (viewerIndex + direction + viewerImages.length) % viewerImages.length;
+            renderViewerImage();
+        }
+
+        document.addEventListener('click', (event) => {
+            const image = event.target.closest('img.zoomable');
+            if (!image) return;
+            const group = image.dataset.group || 'images';
+            const groupImages = [...document.querySelectorAll(`img.zoomable[data-group="${group}"]`)].map(el => ({ src: el.currentSrc || el.src, caption: el.alt || '' }));
+            const clickedSrc = image.currentSrc || image.src;
+            const images = groupImages.map(item => item.src);
+            const index = Math.max(0, images.indexOf(clickedSrc));
+            openLightbox(images, index, groupImages.map(item => item.caption));
+        });
+
+        document.getElementById('imageViewerClose').addEventListener('click', closeLightbox);
+        document.getElementById('imageViewerPrev').addEventListener('click', () => stepLightbox(-1));
+        document.getElementById('imageViewerNext').addEventListener('click', () => stepLightbox(1));
+        document.getElementById('imageViewer').addEventListener('click', (event) => {
+            if (event.target.id === 'imageViewer') closeLightbox();
+        });
+        document.addEventListener('keydown', (event) => {
+            if (document.getElementById('imageViewer').classList.contains('hidden')) return;
+            if (event.key === 'Escape') closeLightbox();
+            if (event.key === 'ArrowLeft') stepLightbox(-1);
+            if (event.key === 'ArrowRight') stepLightbox(1);
+        });
+
+        let toastTimer;
+        function showToast(msg, title = 'Cart', ms = 3000) {
             const t = document.getElementById('toastNotification');
             document.getElementById('toastTitle').textContent = title;
             document.getElementById('toastMessage').textContent = msg;
             t.classList.remove('translate-y-24', 'opacity-0');
-            setTimeout(() => t.classList.add('translate-y-24', 'opacity-0'), 3000);
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => t.classList.add('translate-y-24', 'opacity-0'), ms);
         }
 
-        window.onload = initApp;
+        window.addEventListener('load', () => { toggleAddressField(); initApp(); });
     </script>
 </body>
 </html>
