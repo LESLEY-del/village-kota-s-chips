@@ -52,14 +52,14 @@
                 </div>
             </div>
 
-            <!-- VIEW 2: SETTINGS (Multi-Menu Uploads, Add Item, Gallery, Register Boss) -->
+            <!-- VIEW 2: SETTINGS (Multi-Menu Uploads, Add Menu Item, Gallery, Register Boss) -->
             <div id="viewSettings" class="hidden space-y-6">
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     
-                    <!-- Upload Store Menu Pictures (Multiple pages) -->
+                    <!-- Upload Store Menu Pictures (Multi-page) -->
                     <div class="bg-zinc-900 border border-zinc-800 rounded-3xl p-5 lg:col-span-2">
-                        <h2 class="text-lg font-bold text-white mb-2"><i class="fa-solid fa-images mr-2 text-amber-500"></i> Upload Store Menu Pictures (Multi-page slideshow)</h2>
-                        <p class="text-xs text-zinc-400 mb-3">You can select and upload multiple menu pictures at once so customers can view all pages on the storefront slideshow.</p>
+                        <h2 class="text-lg font-bold text-white mb-2"><i class="fa-solid fa-images mr-2 text-amber-500"></i> Upload Store Menu Pictures (Slideshow Background)</h2>
+                        <p class="text-xs text-zinc-400 mb-3">Upload multiple menu pictures so customers can view all pages and see them rotate as the homepage background.</p>
                         <form onsubmit="handleUploadStoreMenus(event)" class="space-y-3">
                             <div class="flex flex-col sm:flex-row items-center gap-4">
                                 <input type="file" id="storeMenusFiles" accept="image/*" multiple required class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white text-xs file:mr-2 file:py-1 file:px-2 file:rounded-lg file:border-0 file:text-xs file:bg-amber-600 file:text-white">
@@ -69,18 +69,18 @@
                         <div id="currentStoreMenusGrid" class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4"></div>
                     </div>
 
-                    <!-- Add Menu Item -->
+                    <!-- ADD NEW MENU ITEM FORM -->
                     <div class="bg-zinc-900 border border-zinc-800 rounded-3xl p-5">
-                        <h2 class="text-lg font-bold text-white mb-3"><i class="fa-solid fa-burger mr-2 text-amber-500"></i> Add Menu Item</h2>
+                        <h2 class="text-lg font-bold text-white mb-3"><i class="fa-solid fa-burger mr-2 text-amber-500"></i> Add New Menu Item</h2>
                         <form onsubmit="handleAddNewMenuItem(event)" class="space-y-3">
-                            <input type="text" id="newItemName" required placeholder="Item Name" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white text-xs">
-                            <input type="text" id="newItemCategory" required placeholder="Category (e.g. Kotas, Drinks)" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white text-xs">
+                            <input type="text" id="newItemName" required placeholder="Item Name (e.g. Russian Special Kota)" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white text-xs">
+                            <input type="text" id="newItemCategory" required placeholder="Category (e.g. Kotas, Milkshakes, Coffee, Mocktails)" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white text-xs">
                             <input type="number" step="0.01" id="newItemPrice" required placeholder="Price (R)" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white text-xs">
                             <div>
                                 <label class="block text-[11px] text-zinc-400 mb-1">Product Image</label>
                                 <input type="file" id="newItemImageFile" accept="image/*" required class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-1.5 text-white text-xs file:mr-2 file:py-0.5 file:px-2 file:rounded-md file:border-0 file:text-[11px] file:bg-amber-600 file:text-white">
                             </div>
-                            <textarea id="newItemDesc" rows="2" required placeholder="Description" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white text-xs"></textarea>
+                            <textarea id="newItemDesc" rows="2" required placeholder="Description of the item" class="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-3 py-2 text-white text-xs"></textarea>
                             <button type="submit" id="menuItemSubmitBtn" class="w-full py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-semibold text-xs transition">Publish Item</button>
                         </form>
                     </div>
@@ -289,7 +289,6 @@
             });
         }
 
-        // Store Menus Manager
         async function fetchStoreMenusManager() {
             try {
                 const res = await fetch('/api/store-menus');
@@ -464,7 +463,8 @@
         async function handleAddNewMenuItem(e) {
             e.preventDefault();
             const btn = document.getElementById('menuItemSubmitBtn');
-            btn.disabled = true; btn.innerText = 'Publishing...';
+            btn.disabled = true; 
+            btn.innerText = 'Publishing...';
 
             const fileInput = document.getElementById('newItemImageFile');
             let imageBase64 = '';
@@ -479,8 +479,15 @@
             };
 
             const res = await fetch('/api/products', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body) });
-            if(res.ok) { alert('Menu item published successfully!'); e.target.reset(); fetchBuyerStyleMenuList(); }
-            btn.disabled = false; btn.innerText = 'Publish Item';
+            if(res.ok) { 
+                alert('Menu item published successfully!'); 
+                e.target.reset(); 
+                fetchBuyerStyleMenuList(); 
+            } else {
+                alert('Failed to publish menu item.');
+            }
+            btn.disabled = false; 
+            btn.innerText = 'Publish Item';
         }
 
         async function fetchGallery() {
