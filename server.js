@@ -10,7 +10,6 @@ const nodemailer = require('nodemailer');
 const { createClient } = require('@supabase/supabase-js');
 
 const app = express();
-app.use(express.static('public'));
 const PORT = process.env.PORT || 5501;
 const JWT_SECRET = process.env.JWT_SECRET;
 const STORE_NAME = process.env.STORE_NAME || 'Village Kotas & Chips';
@@ -886,11 +885,8 @@ app.delete('/api/store-menus/:id', requireAuth, asyncHandler(async (req, res) =>
     });
 }));
 
-// ================= STATIC FRONTEND =================
-// Place index.html and owner.html inside the public folder.
-// This prevents the server from exposing .env and server.js.
 
-app.use(express.static(path.join(__dirname, 'public'), {
+app.use(express.static(path.join(__dirname), {
     maxAge: '1h',
 
     setHeaders: (res, filePath) => {
@@ -900,7 +896,7 @@ app.use(express.static(path.join(__dirname, 'public'), {
     }
 }));
 
-// ================= START SERVER =================
+
 
 app.listen(PORT, () => {
     console.log(`🚀 Server running on port ${PORT}`);
