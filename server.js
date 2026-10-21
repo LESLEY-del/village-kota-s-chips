@@ -10,6 +10,7 @@ const nodemailer = require('nodemailer');
 const { createClient } = require('@supabase/supabase-js');
 
 const app = express();
+app.use(express.static('public'));
 const PORT = process.env.PORT || 5501;
 const JWT_SECRET = process.env.JWT_SECRET;
 const STORE_NAME = process.env.STORE_NAME || 'Village Kotas & Chips';
