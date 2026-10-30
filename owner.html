@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Boss Owner HQ | Village Kotas Chips</title>
+    <link rel="icon" type="image/jpeg" href="/logo_for_kota.jpeg">
+    <link rel="apple-touch-icon" href="/logo_for_kota.jpeg">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -148,6 +150,9 @@
     <script>
         let currentStoreSettings = { is_open: true, delivery_available: true };
         let sessionExpiredHandled = false;
+
+        // Escapes database values before they are placed into HTML (prevents script injection)
+        const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
         window.onload = function() {
             if (localStorage.getItem('kotas_owner_token')) showDashboard();
@@ -361,8 +366,8 @@
 
                 grid.innerHTML = menus.map(m => `
                     <div class="relative group bg-zinc-800 rounded-xl overflow-hidden border border-zinc-700 aspect-square">
-                        <img src="${m.image}" loading="lazy" decoding="async" alt="Store menu page" class="w-full h-full object-cover">
-                        <button onclick="deleteStoreMenu(${m.id})" class="absolute top-1 right-1 bg-red-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] opacity-80 hover:opacity-100">×</button>
+                        <img src="${esc(m.image)}" loading="lazy" decoding="async" alt="Store menu page" class="w-full h-full object-cover">
+                        <button onclick="deleteStoreMenu(${Number(m.id)})" class="absolute top-1 right-1 bg-red-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] opacity-80 hover:opacity-100">×</button>
                     </div>
                 `).join('');
             } catch (err) { console.error(err); }
@@ -414,25 +419,25 @@
                 <div class="p-4 rounded-2xl bg-zinc-800/80 border border-zinc-700 space-y-3">
                     <div class="flex justify-between items-center">
                         <div>
-                            <span class="font-bold text-white text-base">${o.order_code}</span> 
-                            <span class="ml-2 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-400">${o.status}</span>
+                            <span class="font-bold text-white text-base">${esc(o.order_code)}</span> 
+                            <span class="ml-2 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-400">${esc(o.status)}</span>
                         </div>
                         <div class="text-xs text-zinc-400">Total: <span class="text-white font-bold">R${Number(o.total_amount || 0).toFixed(2)}</span></div>
                     </div>
                     <div class="text-xs text-zinc-300 bg-zinc-900/50 p-3 rounded-xl border border-zinc-700/50 space-y-1">
-                        <p><strong>Customer:</strong> ${o.customer_name} (${o.customer_phone})</p>
-                        <p><strong>Address:</strong> ${o.delivery_address}</p>
+                        <p><strong>Customer:</strong> ${esc(o.customer_name)} (${esc(o.customer_phone)})</p>
+                        <p><strong>Address:</strong> ${esc(o.delivery_address)}</p>
                         <div class="mt-2 pt-2 border-t border-zinc-800">
                             <strong>Items Ordered:</strong>
                             <ul class="list-disc list-inside mt-1 text-zinc-400">
-                                ${o.order_items ? o.order_items.map(item => `<li>${item.quantity}x${item.item_name} (R${item.price}) ${item.addons ? `— <span class="text-amber-300">(${item.addons})</span>` : ''}</li>`).join('') : ''}
+                                ${o.order_items ? o.order_items.map(item => `<li>${esc(item.quantity)}x${esc(item.item_name)} (R${esc(item.price)}) ${item.addons ? `— <span class="text-amber-300">(${esc(item.addons)})</span>` : ''}</li>`).join('') : ''}
                             </ul>
                         </div>
                     </div>
                     <div class="flex justify-end space-x-2">
-                        <button onclick="updateStatus('${o.order_code}', 'Preparing')" class="px-3 py-1.5 bg-zinc-700 text-xs rounded-xl text-white font-medium">Prep</button>
-                        <button onclick="updateStatus('${o.order_code}', 'Ready')" class="px-3 py-1.5 bg-amber-600 text-xs rounded-xl text-white font-medium">Ready</button>
-                        <button onclick="updateStatus('${o.order_code}', 'Completed')" class="px-3 py-1.5 bg-emerald-600 text-xs rounded-xl text-white font-medium">Done</button>
+                        <button data-code="${esc(o.order_code)}" onclick="updateStatus(this.dataset.code, 'Preparing')" class="px-3 py-1.5 bg-zinc-700 text-xs rounded-xl text-white font-medium">Prep</button>
+                        <button data-code="${esc(o.order_code)}" onclick="updateStatus(this.dataset.code, 'Ready')" class="px-3 py-1.5 bg-amber-600 text-xs rounded-xl text-white font-medium">Ready</button>
+                        <button data-code="${esc(o.order_code)}" onclick="updateStatus(this.dataset.code, 'Completed')" class="px-3 py-1.5 bg-emerald-600 text-xs rounded-xl text-white font-medium">Done</button>
                     </div>
                 </div>
             `).join('');
@@ -460,30 +465,30 @@
                 <div class="bg-zinc-800 border border-zinc-700 rounded-3xl overflow-hidden shadow-xl flex flex-col justify-between">
                     <div>
                         <div class="h-44 w-full overflow-hidden relative">
-                            <img src="${p.image}" loading="lazy" decoding="async" alt="Menu item" class="w-full h-full object-cover">
-                            <span class="absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-semibold bg-black/60 backdrop-blur-md text-amber-400 border border-zinc-700">${p.category}</span>
+                            <img src="${esc(p.image)}" loading="lazy" decoding="async" alt="Menu item" class="w-full h-full object-cover">
+                            <span class="absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-semibold bg-black/60 backdrop-blur-md text-amber-400 border border-zinc-700">${esc(p.category)}</span>
                         </div>
                         <div class="p-4 space-y-2">
-                            <h3 class="text-base font-bold text-white">${p.name}</h3>
-                            <p class="text-xs text-zinc-400 leading-relaxed">${p.description}</p>
+                            <h3 class="text-base font-bold text-white">${esc(p.name)}</h3>
+                            <p class="text-xs text-zinc-400 leading-relaxed">${esc(p.description)}</p>
                             
                             <div class="pt-2 space-y-2 border-t border-zinc-700/60">
                                 <div class="flex items-center justify-between">
                                     <span class="text-xs text-zinc-300 font-medium">Update Price (R):</span>
-                                    <input type="number" step="0.01" id="edit-price-${p.id}" value="${p.price}" class="w-24 bg-zinc-900 border border-zinc-600 rounded-lg px-2 py-1 text-amber-400 font-bold text-xs text-right">
+                                    <input type="number" step="0.01" id="edit-price-${Number(p.id)}" value="${esc(p.price)}" class="w-24 bg-zinc-900 border border-zinc-600 rounded-lg px-2 py-1 text-amber-400 font-bold text-xs text-right">
                                 </div>
                                 <div>
                                     <span class="block text-[11px] text-zinc-400 mb-1">Change Product Picture:</span>
-                                    <input type="file" id="edit-file-${p.id}" accept="image/*" class="w-full bg-zinc-900 border border-zinc-600 rounded-lg px-2 py-1 text-white text-[11px] file:mr-1 file:py-0.5 file:px-2 file:rounded file:border-0 file:text-[10px] file:bg-amber-600 file:text-white">
+                                    <input type="file" id="edit-file-${Number(p.id)}" accept="image/*" class="w-full bg-zinc-900 border border-zinc-600 rounded-lg px-2 py-1 text-white text-[11px] file:mr-1 file:py-0.5 file:px-2 file:rounded file:border-0 file:text-[10px] file:bg-amber-600 file:text-white">
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="p-4 pt-0 flex items-center justify-between border-t border-zinc-700/50 mt-2">
-                        <button id="update-btn-${p.id}" onclick="updateProductDetails(${p.id})" class="px-3 py-1.5 bg-amber-600 hover:bg-amber-500 text-white text-xs font-semibold rounded-xl transition">
+                        <button id="update-btn-${Number(p.id)}" onclick="updateProductDetails(${Number(p.id)})" class="px-3 py-1.5 bg-amber-600 hover:bg-amber-500 text-white text-xs font-semibold rounded-xl transition">
                             <i class="fa-solid fa-save mr-1"></i> Update Item
                         </button>
-                        <button onclick="deleteMenuItem(${p.id})" class="px-3 py-1.5 bg-red-600/20 hover:bg-red-600 text-red-400 hover:text-white text-xs font-semibold rounded-xl transition">
+                        <button onclick="deleteMenuItem(${Number(p.id)})" class="px-3 py-1.5 bg-red-600/20 hover:bg-red-600 text-red-400 hover:text-white text-xs font-semibold rounded-xl transition">
                             <i class="fa-solid fa-trash mr-1"></i> Delete
                         </button>
                     </div>
@@ -582,8 +587,8 @@
 
             grid.innerHTML = photos.map(p => `
                 <div class="relative group bg-zinc-800 rounded-xl overflow-hidden border border-zinc-700 aspect-square">
-                    <img src="${p.image}" loading="lazy" decoding="async" alt="Menu item" class="w-full h-full object-cover">
-                    <button onclick="deleteGalleryPhoto(${p.id})" class="absolute top-1 right-1 bg-red-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] opacity-80 hover:opacity-100">×</button>
+                    <img src="${esc(p.image)}" loading="lazy" decoding="async" alt="Gallery photo" class="w-full h-full object-cover">
+                    <button onclick="deleteGalleryPhoto(${Number(p.id)})" class="absolute top-1 right-1 bg-red-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] opacity-80 hover:opacity-100">×</button>
                 </div>
             `).join('');
         }
