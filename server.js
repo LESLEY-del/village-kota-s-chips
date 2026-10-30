@@ -27,6 +27,10 @@ app.use(cors());
 app.use(compression());
 app.use(express.json({ limit: '15mb' }));
 
+app.get('/logo_for_kota.jpeg', (req, res) => {
+  res.sendFile(path.join(__dirname, 'logo_for_kota.jpeg'));
+});
+
 // ================= SUPABASE =================
 
 const SUPABASE_KEY =
